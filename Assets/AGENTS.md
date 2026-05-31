@@ -39,6 +39,7 @@ Prefer gameplay-tunable kinematic systems over full Rigidbody naval physics unle
 - Do not manually create new Unity `.meta` files unless explicitly requested.
 - Before any file modification, explicitly ask the user for permission.
 - Always write plans in Russian.
+- All comments in scripts, as well as tooltips, hints, and other user-facing inline guidance, must be written in Russian.
 - Prefer small, focused changes.
 - When adding a new task file to `Docs/tracker/tasks/`, also update `Docs/tracker/todo_task_list.md`.
 - Preserve existing serialized field names when possible to avoid breaking scene/prefab references.
