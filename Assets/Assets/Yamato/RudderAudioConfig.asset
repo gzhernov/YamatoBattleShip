@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c34f964ef9db71b478bf4902fd6adbcd, type: 3}
+  m_Name: RudderAudioConfig
+  m_EditorClassIdentifier: 
+  switchClip: {fileID: 8300000, guid: 28de432bd38e265478a9222078e3e091, type: 3}
+  switchVolume: 1
+  pitchRandomization: 0
+  logValidationWarnings: 1

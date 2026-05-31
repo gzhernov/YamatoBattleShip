@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cefe0edbaff4b0baca7d0e44fad2b6f, type: 3}
+  m_Name: Special Type AP-ER Shell Ballistics Profile
+  m_EditorClassIdentifier: 
+  description: Special Type AP-ER is a fictional long-range 460 mm armor-piercing
+    shell profile. Compared with Type 91 and Type 1 AP, it is modeled with higher
+    muzzle velocity, longer maximum range, faster time to target, tighter lateral
+    grouping, and worse longitudinal grouping. The ellipse starts strongly stretched
+    along range at short distance and becomes rounder with distance while remaining
+    more elongated than baseline AP.
+  shellType: AP-ER Special Type
+  caliberMm: 460
+  weightKg: 1460
+  projectileLengthCm: 0
+  explosiveMassKg: 28
+  explosiveType: 
+  fuseDescription: Base fuse, 0.35-0.4 s delay
+  fuseDelaySeconds: 0.4
+  muzzleVelocityMetersPerSecond: 830
+  propellantChargeKg: 0
+  propellantDescription: 
+  maxRangeKmAt45Degrees: 48
+  dispersionProfile: {fileID: 11400000, guid: ed3229460e944e63a36bdc11b25bfbd0, type: 2}
+  ballisticTable:
+  - rangeKm: 5
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 5.5
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 10
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 12
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 15
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 18.6
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 20
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 26.3
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 25
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 35.3
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 30
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 45.5
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 35
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 57.5
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 40
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 73.9
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 42.03
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 85.2
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 45
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 92
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 48
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 104
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0

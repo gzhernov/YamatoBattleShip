@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ff0ee999b370a84b89277d3416ac424, type: 3}
+  m_Name: Turret460
+  m_EditorClassIdentifier: 
+  damage: 10
+  cannonSpeed: 10
+  turretSpeed: 10
+  reloadTime: 1
+  maxRange: 200
+  maxAngle: 45
+  tragectoryCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 16.82578
+      value: 9.8828745
+      inSlope: 0.86988974
+      outSlope: 0.86988974
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 27.994085
+      value: 19.857151
+      inSlope: 1.0107365
+      outSlope: 1.0107365
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.4447989
+      outWeight: 0.46540186
+    - serializedVersion: 3
+      time: 36.104477
+      value: 29.847565
+      inSlope: 1.7185588
+      outSlope: 1.7185588
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.74377126
+    - serializedVersion: 3
+      time: 40.979477
+      value: 40.01514
+      inSlope: 3.0863023
+      outSlope: 3.0863023
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.6084806
+      outWeight: 1
+    - serializedVersion: 3
+      time: 42.774628
+      value: 45.09857
+      inSlope: 2.738806
+      outSlope: 2.738806
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.784918
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98002659273f05f4dab155bd9acee9c4, type: 3}
+  m_Name: YamatoEngineConfig
+  m_EditorClassIdentifier: 
+  sectors:
+  - sector: 1
+    displayName: "\u041F\u041E\u041B\u041D\u042B\u0419 \u041D\u0410\u0417\u0410\u0414"
+    angle: -92
+    speedKnots: -9
+  - sector: 2
+    displayName: "\u041D\u0410\u0417\u0410\u0414 2/3"
+    angle: -60
+    speedKnots: -6
+  - sector: 4
+    displayName: "\u0421\u0422\u041E\u041F"
+    angle: 0
+    speedKnots: 0
+  - sector: 5
+    displayName: "\u0412\u041F\u0415\u0420\u0401\u0414 1/3"
+    angle: 30
+    speedKnots: 6
+  - sector: 6
+    displayName: "\u0412\u041F\u0415\u0420\u0401\u0414 2/3"
+    angle: 60
+    speedKnots: 12
+  - sector: 7
+    displayName: STAND BY
+    angle: 90
+    speedKnots: 16
+  - sector: 8
+    displayName: "\u041F\u041E\u041B\u041D\u042B\u0419 \u0412\u041F\u0415\u0420\u0401\u0414"
+    angle: 120
+    speedKnots: 25

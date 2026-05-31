@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b717d63676fb401aa0bb36ccc19dbe0d, type: 3}
+  m_Name: Type 1 AP Dispersion
+  m_EditorClassIdentifier: 
+  points:
+  - distance: 5000
+    lateralSpread: 33
+    longitudinalSpread: 59
+  - distance: 10000
+    lateralSpread: 65
+    longitudinalSpread: 119
+  - distance: 15000
+    lateralSpread: 98
+    longitudinalSpread: 178
+  - distance: 20000
+    lateralSpread: 131
+    longitudinalSpread: 238
+  - distance: 25000
+    lateralSpread: 164
+    longitudinalSpread: 297
+  - distance: 30000
+    lateralSpread: 196
+    longitudinalSpread: 357
+  - distance: 35000
+    lateralSpread: 229
+    longitudinalSpread: 416
+  - distance: 40000
+    lateralSpread: 262
+    longitudinalSpread: 476
+  - distance: 42030
+    lateralSpread: 275
+    longitudinalSpread: 500

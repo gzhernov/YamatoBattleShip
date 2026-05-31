@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b8ea45245afd554eaae6ea13ad492c5, type: 3}
+  m_Name: EngineSoundConfig
+  m_EditorClassIdentifier: 
+  idleLayer:
+    clip: {fileID: 0}
+    volumeMultiplier: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  aheadLowLayer:
+    clip: {fileID: 0}
+    volumeMultiplier: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  aheadHighLayer:
+    clip: {fileID: 0}
+    volumeMultiplier: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  asternLayer:
+    clip: {fileID: 0}
+    volumeMultiplier: 1
+    minPitch: 0.95
+    maxPitch: 1.05
+  fadeSpeed: 1.5
+  rpmRiseSpeed: 0.8
+  rpmFallSpeed: 0.45
+  speedInfluence: 0.8
+  orderInfluence: 0.1
+  loadInfluence: 0.1
+  accelerationReferenceKnotsPerSecond: 1.5
+  accelerationLoadWeight: 0.35
+  idleFadeOutAtSpeed01: 0.85
+  aheadLowPeakRpm01: 0.35
+  aheadLowBlendWidth01: 0.35
+  aheadHighStartRpm01: 0.45
+  asternSpeedWeight: 0.7
+  asternLoadWeight: 0.3
+  logValidationWarnings: 1

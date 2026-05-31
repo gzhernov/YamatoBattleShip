@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cefe0edbaff4b0baca7d0e44fad2b6f, type: 3}
+  m_Name: Type 91 AP Shell Ballistics Profile
+  m_EditorClassIdentifier: 
+  description: Type 91 AP / APC is the baseline historical Japanese 460 mm armor-piercing
+    capped shell for the Yamato-class main battery. Gameplay role: baseline AP.
+    It uses the agreed baseline AP dispersion ellipse and the shared AP flight-time
+    table also used by Type 1 AP.
+  shellType: AP / APC Type 91
+  caliberMm: 460
+  weightKg: 1460
+  projectileLengthCm: 195.35
+  explosiveMassKg: 33.85
+  explosiveType: TNA
+  fuseDescription: Base fuse, 0.4 s delay
+  fuseDelaySeconds: 0.4
+  muzzleVelocityMetersPerSecond: 780
+  propellantChargeKg: 360
+  propellantDescription: 6 bags
+  maxRangeKmAt45Degrees: 42.03
+  dispersionProfile: {fileID: 11400000, guid: be4699e7b3992ab4eb1b894a29e5246f, type: 2}
+  ballisticTable:
+  - rangeKm: 5
+    hasElevationAngle: 1
+    elevationAngleDegrees: 2.4
+    hasFlightTime: 1
+    flightTimeSeconds: 7
+    hasFallAngle: 1
+    fallAngleDegrees: 3.3
+    hasImpactVelocity: 1
+    impactVelocityMetersPerSecond: 690
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 10
+    hasElevationAngle: 1
+    elevationAngleDegrees: 5.4
+    hasFlightTime: 1
+    flightTimeSeconds: 15
+    hasFallAngle: 1
+    fallAngleDegrees: 7.2
+    hasImpactVelocity: 1
+    impactVelocityMetersPerSecond: 620
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 15
+    hasElevationAngle: 1
+    elevationAngleDegrees: 8.6
+    hasFlightTime: 1
+    flightTimeSeconds: 23
+    hasFallAngle: 1
+    fallAngleDegrees: 11.5
+    hasImpactVelocity: 1
+    impactVelocityMetersPerSecond: 562
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 20
+    hasElevationAngle: 1
+    elevationAngleDegrees: 12.6
+    hasFlightTime: 1
+    flightTimeSeconds: 32
+    hasFallAngle: 1
+    fallAngleDegrees: 16.5
+    hasImpactVelocity: 1
+    impactVelocityMetersPerSecond: 521
+    hasArmorPenetration: 1
+    armorPenetrationMm: 495
+  - rangeKm: 25
+    hasElevationAngle: 1
+    elevationAngleDegrees: 17.2
+    hasFlightTime: 1
+    flightTimeSeconds: 42.5
+    hasFallAngle: 1
+    fallAngleDegrees: 23
+    hasImpactVelocity: 1
+    impactVelocityMetersPerSecond: 490
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 30
+    hasElevationAngle: 1
+    elevationAngleDegrees: 23.2
+    hasFlightTime: 1
+    flightTimeSeconds: 54.2
+    hasFallAngle: 1
+    fallAngleDegrees: 31.4
+    hasImpactVelocity: 1
+    impactVelocityMetersPerSecond: 475
+    hasArmorPenetration: 1
+    armorPenetrationMm: 361
+  - rangeKm: 35
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 67.7
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 40
+    hasElevationAngle: 0
+    elevationAngleDegrees: 0
+    hasFlightTime: 1
+    flightTimeSeconds: 85.9
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
+  - rangeKm: 42.03
+    hasElevationAngle: 1
+    elevationAngleDegrees: 45
+    hasFlightTime: 1
+    flightTimeSeconds: 98.6
+    hasFallAngle: 0
+    fallAngleDegrees: 0
+    hasImpactVelocity: 0
+    impactVelocityMetersPerSecond: 0
+    hasArmorPenetration: 0
+    armorPenetrationMm: 0
