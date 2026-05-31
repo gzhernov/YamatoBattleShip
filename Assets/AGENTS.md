@@ -6,6 +6,7 @@ BattleShip is a Unity 6 naval combat prototype. The current gameplay direction i
 Prefer gameplay-tunable kinematic systems over full Rigidbody naval physics unless explicitly asked otherwise.
 
 ## Where To Look First
+- Git repository root is one folder above `Assets/` at `BattleShip/`; when searching for project-wide files, look there too.
 - `Core/` - main ship movement, propulsion, rudder, maneuvering, visual heel, wave motion, config, combat profiles.
 - `UI/` - Unity UI Toolkit screens and controls.
 - `UI/speedo/` - engine telegraph and speedometer UI experiments.
