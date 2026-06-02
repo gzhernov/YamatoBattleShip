@@ -51,8 +51,11 @@ public class EngineTelegraphAudioConfigEditor : Editor
         EditorGUILayout.PropertyField(sectorAudioEntries, true);
 
         EditorGUILayout.Space();
-        EditorGUILayout.LabelField("Fallbacks", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Common", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(defaultConfirmDelay);
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Fallbacks", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(defaultSwitchVolume);
         EditorGUILayout.PropertyField(defaultConfirmVolume);
         EditorGUILayout.PropertyField(logValidationWarnings);

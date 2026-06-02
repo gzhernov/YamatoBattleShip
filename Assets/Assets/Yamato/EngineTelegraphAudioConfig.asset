@@ -17,49 +17,42 @@ MonoBehaviour:
   - sector: 1
     switchClip: {fileID: 8300000, guid: 28de432bd38e265478a9222078e3e091, type: 3}
     confirmClip: {fileID: 8300000, guid: 302d227f357128547b69a85541980e2c, type: 3}
-    confirmDelay: 0.5
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0
   - sector: 2
     switchClip: {fileID: 8300000, guid: 28de432bd38e265478a9222078e3e091, type: 3}
     confirmClip: {fileID: 8300000, guid: a7c7d04c44d53b64b8d41d0dc6782ec9, type: 3}
-    confirmDelay: 0.5
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0
   - sector: 4
     switchClip: {fileID: 8300000, guid: 28de432bd38e265478a9222078e3e091, type: 3}
     confirmClip: {fileID: 8300000, guid: f421f19e5be009541af2662630549dca, type: 3}
-    confirmDelay: 0.5
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0
   - sector: 5
     switchClip: {fileID: 8300000, guid: 163e9e74b0b7fbc4890bcab100e4e86f, type: 3}
     confirmClip: {fileID: 8300000, guid: 2a7926aca73547143936906276f13d8a, type: 3}
-    confirmDelay: 0.5
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0
   - sector: 6
     switchClip: {fileID: 8300000, guid: 163e9e74b0b7fbc4890bcab100e4e86f, type: 3}
     confirmClip: {fileID: 8300000, guid: cf25954beb6e3bd4f9f2df3c1a98f1b4, type: 3}
-    confirmDelay: 0.5
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0
   - sector: 7
     switchClip: {fileID: 8300000, guid: 163e9e74b0b7fbc4890bcab100e4e86f, type: 3}
     confirmClip: {fileID: 8300000, guid: 79d936596f275f44a84adb72a2038493, type: 3}
-    confirmDelay: 0.5
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0
   - sector: 8
     switchClip: {fileID: 8300000, guid: 163e9e74b0b7fbc4890bcab100e4e86f, type: 3}
     confirmClip: {fileID: 8300000, guid: 6d631b12d63d7b14faa2f31feffc0619, type: 3}
-    confirmDelay: 0.5
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0

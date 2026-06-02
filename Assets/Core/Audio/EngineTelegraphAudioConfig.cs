@@ -9,9 +9,6 @@ public class EngineTelegraphAudioSectorEntry
     public AudioClip switchClip;
     public AudioClip confirmClip;
 
-    [Min(0f)]
-    public float confirmDelay = 0.3f;
-
     [Range(0f, 1f)]
     public float switchVolume = 1f;
 
@@ -201,7 +198,6 @@ public class EngineTelegraphAudioConfig : ScriptableObject
         return new EngineTelegraphAudioSectorEntry
         {
             sector = sector,
-            confirmDelay = defaultConfirmDelay,
             switchVolume = defaultSwitchVolume,
             confirmVolume = defaultConfirmVolume,
             pitchRandomization = 0f
@@ -224,7 +220,6 @@ public class EngineTelegraphAudioConfig : ScriptableObject
             if (entry == null)
                 continue;
 
-            entry.confirmDelay = Mathf.Max(0f, entry.confirmDelay);
             entry.switchVolume = Mathf.Clamp01(entry.switchVolume);
             entry.confirmVolume = Mathf.Clamp01(entry.confirmVolume);
             entry.pitchRandomization = Mathf.Max(0f, entry.pitchRandomization);

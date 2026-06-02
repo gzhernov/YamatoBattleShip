@@ -171,7 +171,7 @@ public class EngineTelegraphAudioController : MonoBehaviour
         EngineTelegraphAudioConfig activeConfig
     )
     {
-        float delay = entry.confirmDelay > 0f ? entry.confirmDelay : activeConfig.DefaultConfirmDelay;
+        float delay = activeConfig.DefaultConfirmDelay;
 
         if (delay > 0f)
         {
