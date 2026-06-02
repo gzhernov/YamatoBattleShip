@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   engineTelegraphConfig: {fileID: 11400000, guid: 5b0ce3d69aa5d1b4bb1d4bb8debc6c9b, type: 2}
   engineTelegraphAudioConfig: {fileID: 11400000, guid: 09be4af7ac15e4d46b2653080b265842, type: 2}
+  engineSoundConfig: {fileID: 0}
+  simpleEngineSoundConfig: {fileID: 0}
+  smokeVfxConfig: {fileID: 11400000, guid: 87a6ec9b3d695ab48b7807394289b73c, type: 2}
   initialEngineTelegraphSector: 4
   rudderAudioConfig: {fileID: 11400000, guid: 9d3a5a919bf70da4c9f4e312f948484f, type: 2}
   rudderDefaultPosition: 2
   rudderTotalPositions: 5
-  rudderShiftTimeFromCenterToFull: 6
+  rudderShiftTimeFromCenterToFull: 22
   maxRudderAngleDegrees: 35
   knotsToUnityUnitsPerSecond: 0.8
   simulationSpeedMultiplier: 1

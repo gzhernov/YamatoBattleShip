@@ -10,6 +10,7 @@ public class ShipConfigEditor : Editor
     private SerializedProperty engineTelegraphAudioConfig;
     private SerializedProperty engineSoundConfig;
     private SerializedProperty simpleEngineSoundConfig;
+    private SerializedProperty smokeVfxConfig;
     private SerializedProperty initialEngineTelegraphSector;
 
     private SerializedProperty rudderAudioConfig;
@@ -58,6 +59,7 @@ public class ShipConfigEditor : Editor
         engineTelegraphAudioConfig = serializedObject.FindProperty("engineTelegraphAudioConfig");
         engineSoundConfig = serializedObject.FindProperty("engineSoundConfig");
         simpleEngineSoundConfig = serializedObject.FindProperty("simpleEngineSoundConfig");
+        smokeVfxConfig = serializedObject.FindProperty("smokeVfxConfig");
         initialEngineTelegraphSector = serializedObject.FindProperty("initialEngineTelegraphSector");
 
         rudderAudioConfig = serializedObject.FindProperty("rudderAudioConfig");
@@ -114,6 +116,7 @@ public class ShipConfigEditor : Editor
                 EditorGUILayout.PropertyField(engineTelegraphAudioConfig);
                 EditorGUILayout.PropertyField(engineSoundConfig);
                 EditorGUILayout.PropertyField(simpleEngineSoundConfig);
+                EditorGUILayout.PropertyField(smokeVfxConfig);
                 EditorGUILayout.PropertyField(initialEngineTelegraphSector);
             },
             true
@@ -264,7 +267,11 @@ public class ShipConfigEditor : Editor
             ? simpleEngineSoundConfig.objectReferenceValue.name
             : "simple engine sound not assigned";
 
-        return $"{configName}, {audioConfigName}, {soundConfigName}, {simpleSoundConfigName}, initial {GetEnumDisplayName(initialEngineTelegraphSector)}";
+        string smokeVfxConfigName = smokeVfxConfig.objectReferenceValue != null
+            ? smokeVfxConfig.objectReferenceValue.name
+            : "smoke vfx not assigned";
+
+        return $"{configName}, {audioConfigName}, {soundConfigName}, {simpleSoundConfigName}, {smokeVfxConfigName}, initial {GetEnumDisplayName(initialEngineTelegraphSector)}";
     }
 
     private static string GetEnumDisplayName(SerializedProperty property)
