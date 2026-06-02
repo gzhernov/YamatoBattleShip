@@ -7,6 +7,7 @@ public class RudderView : MonoBehaviour
     [SerializeField] private ShipStatuses shipStatuses;
     [SerializeField] private RectTransform trackRect;
     [SerializeField] private RectTransform indicatorRect;
+    [SerializeField] private RectTransform rudderPointerShadowRect;
 
     [Header("Behavior")]
     [SerializeField] private bool refreshOnEnable = true;
@@ -18,6 +19,7 @@ public class RudderView : MonoBehaviour
 
     private float currentAnchoredX;
     private float targetAnchoredX;
+    private float shadowAnchoredX;
     private bool hasResolvedInitialPosition;
 
     private void OnEnable()
@@ -32,6 +34,7 @@ public class RudderView : MonoBehaviour
         }
 
         shipStatuses.OnTargetRudderValueChanged += OnTargetRudderValueChanged;
+        shipStatuses.OnActualRudderValueChanged += OnActualRudderValueChanged;
 
         if (refreshOnEnable)
         {
@@ -40,6 +43,7 @@ public class RudderView : MonoBehaviour
         else
         {
             CacheCurrentIndicatorPosition();
+            UpdateShadowView(shipStatuses.ActualRudderSignedValue);
         }
     }
 
@@ -48,6 +52,7 @@ public class RudderView : MonoBehaviour
         if (shipStatuses != null)
         {
             shipStatuses.OnTargetRudderValueChanged -= OnTargetRudderValueChanged;
+            shipStatuses.OnActualRudderValueChanged -= OnActualRudderValueChanged;
         }
     }
 
@@ -78,6 +83,8 @@ public class RudderView : MonoBehaviour
         {
             trackRect = GetComponent<RectTransform>();
         }
+
+        ResolveShadowReference();
     }
 
     private void ResolveReferences()
@@ -90,6 +97,22 @@ public class RudderView : MonoBehaviour
         if (trackRect == null)
         {
             trackRect = GetComponent<RectTransform>();
+        }
+
+        ResolveShadowReference();
+    }
+
+    private void ResolveShadowReference()
+    {
+        if (rudderPointerShadowRect != null || trackRect == null)
+        {
+            return;
+        }
+
+        Transform shadowTransform = trackRect.Find("rudderPointerShadow");
+        if (shadowTransform is RectTransform shadowRect)
+        {
+            rudderPointerShadowRect = shadowRect;
         }
     }
 
@@ -119,22 +142,34 @@ public class RudderView : MonoBehaviour
             return false;
         }
 
+        if (rudderPointerShadowRect != null && !(rudderPointerShadowRect.parent is RectTransform))
+        {
+            Debug.LogError("RudderView: Shadow parent must be a RectTransform.", rudderPointerShadowRect);
+            return false;
+        }
+
         return true;
     }
 
     private void ApplyCurrentStatus(bool instant)
     {
-        UpdateView(shipStatuses.TargetRudderSignedValue, instant);
+        UpdateTargetView(shipStatuses.TargetRudderSignedValue, instant);
+        UpdateShadowView(shipStatuses.ActualRudderSignedValue);
     }
 
     private void OnTargetRudderValueChanged(float signedValue)
     {
-        UpdateView(signedValue, false);
+        UpdateTargetView(signedValue, false);
     }
 
-    private void UpdateView(float signedValue, bool instant)
+    private void OnActualRudderValueChanged(float signedValue)
     {
-        targetAnchoredX = GetAnchoredXFromSignedValue(signedValue);
+        UpdateShadowView(signedValue);
+    }
+
+    private void UpdateTargetView(float signedValue, bool instant)
+    {
+        targetAnchoredX = GetAnchoredXFromSignedValue(indicatorRect, signedValue);
 
         if (instant || !smoothMovement)
         {
@@ -155,17 +190,42 @@ public class RudderView : MonoBehaviour
         }
     }
 
-    private float GetAnchoredXFromSignedValue(float signedValue)
+    private void UpdateShadowView(float signedValue)
     {
+        shadowAnchoredX = GetAnchoredXFromSignedValue(rudderPointerShadowRect, signedValue);
+        SetShadowAnchoredX(shadowAnchoredX);
+
+        if (showDebugInfo)
+        {
+            Debug.Log(
+                $"RudderView: actual rudder {signedValue:F2}, shadow anchored X {shadowAnchoredX:F1}.",
+                this
+            );
+        }
+    }
+
+    private float GetAnchoredXFromSignedValue(RectTransform pointerRect, float signedValue)
+    {
+        if (pointerRect == null)
+        {
+            return 0f;
+        }
+
         float normalizedValue = Mathf.InverseLerp(-1f, 1f, Mathf.Clamp(signedValue, -1f, 1f));
-        RectTransform indicatorParentRect = (RectTransform)indicatorRect.parent;
+        RectTransform pointerParentRect = pointerRect.parent as RectTransform;
+
+        if (pointerParentRect == null)
+        {
+            return 0f;
+        }
+
         Rect trackWorldRect = GetWorldRect(trackRect);
 
         Vector3 leftWorldPoint = new Vector3(trackWorldRect.xMin, trackWorldRect.center.y, 0f);
         Vector3 rightWorldPoint = new Vector3(trackWorldRect.xMax, trackWorldRect.center.y, 0f);
 
-        Vector3 leftParentLocalPoint = indicatorParentRect.InverseTransformPoint(leftWorldPoint);
-        Vector3 rightParentLocalPoint = indicatorParentRect.InverseTransformPoint(rightWorldPoint);
+        Vector3 leftParentLocalPoint = pointerParentRect.InverseTransformPoint(leftWorldPoint);
+        Vector3 rightParentLocalPoint = pointerParentRect.InverseTransformPoint(rightWorldPoint);
 
         return Mathf.Lerp(leftParentLocalPoint.x, rightParentLocalPoint.x, normalizedValue);
     }
@@ -193,6 +253,18 @@ public class RudderView : MonoBehaviour
         anchoredPosition.x = anchoredX;
         indicatorRect.anchoredPosition = anchoredPosition;
         hasResolvedInitialPosition = true;
+    }
+
+    private void SetShadowAnchoredX(float anchoredX)
+    {
+        if (rudderPointerShadowRect == null)
+        {
+            return;
+        }
+
+        Vector2 anchoredPosition = rudderPointerShadowRect.anchoredPosition;
+        anchoredPosition.x = anchoredX;
+        rudderPointerShadowRect.anchoredPosition = anchoredPosition;
     }
 
     private static Rect GetWorldRect(RectTransform rectTransform)
