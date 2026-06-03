@@ -24,7 +24,7 @@ public static class MusicCfgParser
         string configPath,
         MusicPlaybackSettingsAsset playbackSettings)
     {
-        Dictionary<string, Dictionary<string, string>> sections = ParseSections(text);
+        Dictionary<string, List<string>> sections = ParseSections(text);
         List<string> warnings = new List<string>();
 
         MusicRuntimeSettings runtimeSettings = BuildRuntimeSettings(
@@ -45,19 +45,19 @@ public static class MusicCfgParser
         );
     }
 
-    private static Dictionary<string, Dictionary<string, string>> ParseSections(string text)
+    private static Dictionary<string, List<string>> ParseSections(string text)
     {
-        Dictionary<string, Dictionary<string, string>> sections =
-            new Dictionary<string, Dictionary<string, string>>(System.StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, List<string>> sections =
+            new Dictionary<string, List<string>>(System.StringComparer.OrdinalIgnoreCase);
 
-        Dictionary<string, string> currentSection = null;
+        List<string> currentSection = null;
         string[] lines = (text ?? string.Empty).Replace("\r\n", "\n").Split('\n');
 
         for (int i = 0; i < lines.Length; i++)
         {
             string line = lines[i].Trim();
 
-            if (string.IsNullOrEmpty(line) || line.StartsWith(";") || line.StartsWith("#"))
+            if (string.IsNullOrEmpty(line) || line.StartsWith("#"))
                 continue;
 
             if (line.StartsWith("[") && line.EndsWith("]"))
@@ -67,7 +67,7 @@ public static class MusicCfgParser
                 if (string.IsNullOrEmpty(sectionName))
                     continue;
 
-                currentSection = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+                currentSection = new List<string>();
                 sections[sectionName] = currentSection;
                 continue;
             }
@@ -75,25 +75,14 @@ public static class MusicCfgParser
             if (currentSection == null)
                 continue;
 
-            int separatorIndex = line.IndexOf('=');
-
-            if (separatorIndex <= 0)
-                continue;
-
-            string key = line.Substring(0, separatorIndex).Trim();
-            string value = line.Substring(separatorIndex + 1).Trim();
-
-            if (!string.IsNullOrEmpty(key))
-            {
-                currentSection[key] = value;
-            }
+            currentSection.Add(line);
         }
 
         return sections;
     }
 
     private static MusicRuntimeSettings BuildRuntimeSettings(
-        Dictionary<string, Dictionary<string, string>> sections,
+        Dictionary<string, List<string>> sections,
         MusicPlaybackSettingsAsset playbackSettings,
         List<string> warnings)
     {
@@ -107,11 +96,16 @@ public static class MusicCfgParser
             ? playbackSettings.FallbackFadeTime
             : 2f;
 
-        if (!sections.TryGetValue("GENERAL", out Dictionary<string, string> generalSection))
+        if (!sections.TryGetValue("GENERAL", out List<string> generalSectionLines))
         {
-            warnings.Add("Секция [GENERAL] не найдена. Используются резервные значения воспроизведения.");
+            warnings.Add("Секция [GENERAL] не найдена. Используются резервные значения.");
             return new MusicRuntimeSettings(stateConfirmationTime, minStateDuration, fadeTime);
         }
+
+        Dictionary<string, string> generalSection = ReadKeyValueSection(
+            generalSectionLines,
+            "[GENERAL]",
+            warnings);
 
         stateConfirmationTime = GetFloatValue(
             generalSection,
@@ -139,170 +133,88 @@ public static class MusicCfgParser
     }
 
     private static List<MusicStatePlaylistData> BuildPlaylists(
-        Dictionary<string, Dictionary<string, string>> sections,
+        Dictionary<string, List<string>> sections,
         List<string> warnings)
     {
         List<MusicStatePlaylistData> playlists = new List<MusicStatePlaylistData>();
-        List<MusicState> declaredStates = ReadDeclaredStates(sections, warnings);
 
-        if (declaredStates.Count == 0)
+        foreach (KeyValuePair<string, List<string>> pair in sections)
         {
-            foreach (KeyValuePair<string, Dictionary<string, string>> pair in sections)
-            {
-                if (pair.Key.Equals("GENERAL", System.StringComparison.OrdinalIgnoreCase) ||
-                    pair.Key.Equals("STATES", System.StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                if (MusicStateUtility.TryParseCfgSectionName(pair.Key, out MusicState parsedState) &&
-                    !declaredStates.Contains(parsedState))
-                {
-                    declaredStates.Add(parsedState);
-                }
-            }
-        }
-
-        for (int i = 0; i < declaredStates.Count; i++)
-        {
-            MusicState state = declaredStates[i];
-            string sectionName = MusicStateUtility.GetCfgSectionName(state);
-
-            if (!sections.TryGetValue(sectionName, out Dictionary<string, string> stateSection))
-            {
-                warnings.Add($"Секция состояния [{sectionName}] не найдена и будет пропущена.");
+            if (pair.Key.Equals("GENERAL", System.StringComparison.OrdinalIgnoreCase))
                 continue;
-            }
 
-            List<MusicTrackEntry> tracks = ReadTracks(stateSection, sectionName, warnings);
+            if (!MusicStateUtility.TryParseCfgSectionName(pair.Key, out MusicState state))
+                continue;
+
+            List<MusicTrackEntry> tracks = ReadTracks(pair.Value, pair.Key, warnings);
             playlists.Add(new MusicStatePlaylistData(state, tracks));
         }
 
         return playlists;
     }
 
-    private static List<MusicState> ReadDeclaredStates(
-        Dictionary<string, Dictionary<string, string>> sections,
-        List<string> warnings)
-    {
-        List<MusicState> states = new List<MusicState>();
-
-        if (!sections.TryGetValue("STATES", out Dictionary<string, string> statesSection))
-        {
-            warnings.Add("Секция [STATES] не найдена. Состояния будут собраны по именам секций.");
-            return states;
-        }
-
-        int declaredCount = GetIntValue(statesSection, "States", -1, warnings, "[STATES]/States");
-
-        if (declaredCount > 0)
-        {
-            for (int i = 1; i <= declaredCount; i++)
-            {
-                string stateKey = $"State{i}";
-
-                if (!statesSection.TryGetValue(stateKey, out string rawStateName))
-                {
-                    warnings.Add($"В [STATES] отсутствует ключ {stateKey}.");
-                    continue;
-                }
-
-                if (!MusicStateUtility.TryParseCfgSectionName(rawStateName, out MusicState state))
-                {
-                    warnings.Add($"Неизвестное состояние '{rawStateName}' в ключе {stateKey}.");
-                    continue;
-                }
-
-                if (!states.Contains(state))
-                {
-                    states.Add(state);
-                }
-            }
-
-            return states;
-        }
-
-        List<string> fallbackKeys = new List<string>();
-
-        foreach (string key in statesSection.Keys)
-        {
-            if (key.StartsWith("State", System.StringComparison.OrdinalIgnoreCase))
-            {
-                fallbackKeys.Add(key);
-            }
-        }
-
-        fallbackKeys.Sort(System.StringComparer.OrdinalIgnoreCase);
-
-        for (int i = 0; i < fallbackKeys.Count; i++)
-        {
-            string key = fallbackKeys[i];
-            string rawStateName = statesSection[key];
-
-            if (!MusicStateUtility.TryParseCfgSectionName(rawStateName, out MusicState state))
-            {
-                warnings.Add($"Неизвестное состояние '{rawStateName}' в ключе {key}.");
-                continue;
-            }
-
-            if (!states.Contains(state))
-            {
-                states.Add(state);
-            }
-        }
-
-        return states;
-    }
-
     private static List<MusicTrackEntry> ReadTracks(
-        Dictionary<string, string> stateSection,
+        List<string> stateSectionLines,
         string sectionName,
         List<string> warnings)
     {
         List<MusicTrackEntry> tracks = new List<MusicTrackEntry>();
-        int declaredCount = GetIntValue(stateSection, "Tracks", -1, warnings, $"[{sectionName}]/Tracks");
 
-        if (declaredCount > 0)
+        for (int i = 0; i < stateSectionLines.Count; i++)
         {
-            for (int i = 1; i <= declaredCount; i++)
-            {
-                string trackKey = $"Track{i}";
+            string line = stateSectionLines[i];
 
-                if (!stateSection.TryGetValue(trackKey, out string trackId) || string.IsNullOrWhiteSpace(trackId))
-                {
-                    warnings.Add($"В секции [{sectionName}] отсутствует или пуст ключ {trackKey}.");
-                    continue;
-                }
-
-                tracks.Add(new MusicTrackEntry(trackId));
-            }
-
-            return tracks;
-        }
-
-        List<string> fallbackKeys = new List<string>();
-
-        foreach (string key in stateSection.Keys)
-        {
-            if (key.StartsWith("Track", System.StringComparison.OrdinalIgnoreCase))
-            {
-                fallbackKeys.Add(key);
-            }
-        }
-
-        fallbackKeys.Sort(System.StringComparer.OrdinalIgnoreCase);
-
-        for (int i = 0; i < fallbackKeys.Count; i++)
-        {
-            string trackId = stateSection[fallbackKeys[i]];
-
-            if (string.IsNullOrWhiteSpace(trackId))
+            if (string.IsNullOrWhiteSpace(line))
                 continue;
 
-            tracks.Add(new MusicTrackEntry(trackId));
+            if (line.IndexOf('=') >= 0)
+            {
+                warnings.Add($"В секции [{sectionName}] поддерживаются только строки с треками. Строка '{line}' будет проигнорирована.");
+                continue;
+            }
+
+            tracks.Add(new MusicTrackEntry(line));
         }
 
         return tracks;
+    }
+
+    private static Dictionary<string, string> ReadKeyValueSection(
+        List<string> sectionLines,
+        string sectionName,
+        List<string> warnings)
+    {
+        Dictionary<string, string> values =
+            new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase);
+
+        for (int i = 0; i < sectionLines.Count; i++)
+        {
+            string line = sectionLines[i];
+
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            int separatorIndex = line.IndexOf('=');
+
+            if (separatorIndex <= 0)
+            {
+                warnings.Add($"В секции {sectionName} ожидаются пары ключ=значение. Строка '{line}' будет проигнорирована.");
+                continue;
+            }
+
+            string key = line.Substring(0, separatorIndex).Trim();
+            string value = line.Substring(separatorIndex + 1).Trim();
+
+            if (string.IsNullOrEmpty(key))
+            {
+                warnings.Add($"В секции {sectionName} найден пустой ключ в строке '{line}'.");
+                continue;
+            }
+
+            values[key] = value;
+        }
+
+        return values;
     }
 
     private static int GetIntValue(

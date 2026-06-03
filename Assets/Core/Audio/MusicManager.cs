@@ -80,7 +80,6 @@ public class MusicManager : MonoBehaviour
         }
 
         instance = this;
-        DontDestroyOnLoad(gameObject);
         EnsurePlaybackSettings();
         EnsureAudioSources();
         inspectorStateCache = currentState;
@@ -98,16 +97,18 @@ public class MusicManager : MonoBehaviour
 
     private void OnDisable()
     {
-        if (initializationCoroutine != null)
-        {
-            StopCoroutine(initializationCoroutine);
-            initializationCoroutine = null;
-        }
+        StopAllRunningOperations();
+        CleanupPlaybackState();
+    }
 
-        if (transitionCoroutine != null)
+    private void OnDestroy()
+    {
+        StopAllRunningOperations();
+        CleanupPlaybackState();
+
+        if (instance == this)
         {
-            StopCoroutine(transitionCoroutine);
-            transitionCoroutine = null;
+            instance = null;
         }
     }
 
@@ -201,6 +202,41 @@ public class MusicManager : MonoBehaviour
         }
 
         initializationCoroutine = null;
+    }
+
+    private void StopAllRunningOperations()
+    {
+        if (initializationCoroutine != null)
+        {
+            StopCoroutine(initializationCoroutine);
+            initializationCoroutine = null;
+        }
+
+        if (transitionCoroutine != null)
+        {
+            StopCoroutine(transitionCoroutine);
+            transitionCoroutine = null;
+        }
+    }
+
+    private void CleanupPlaybackState()
+    {
+        if (primaryAudioSource != null)
+        {
+            StopAndReleaseSource(primaryAudioSource);
+        }
+
+        if (secondaryAudioSource != null)
+        {
+            StopAndReleaseSource(secondaryAudioSource);
+        }
+
+        currentTrackId = string.Empty;
+        currentTrackPath = string.Empty;
+        loadedConfigPath = string.Empty;
+        configLoaded = false;
+        isInitialized = false;
+        hasPendingStateChange = false;
     }
 
     private bool TryLoadMusicConfiguration(out MusicCfgParseResult parseResult)
