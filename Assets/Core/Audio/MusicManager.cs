@@ -143,11 +143,11 @@ public class MusicManager : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void EnsureRuntimeInstance()
     {
-        if (FindFirstObjectByType<MusicManager>() != null)
-            return;
-
-        GameObject managerObject = new GameObject("Music Manager");
-        managerObject.AddComponent<MusicManager>();
+        // if (FindFirstObjectByType<MusicManager>() != null)
+        //     return;
+        //
+        // GameObject managerObject = new GameObject("Music Manager");
+        // managerObject.AddComponent<MusicManager>();
     }
 
     private IEnumerator InitializeMusicSystem()

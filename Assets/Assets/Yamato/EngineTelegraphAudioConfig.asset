@@ -56,7 +56,7 @@ MonoBehaviour:
     switchVolume: 1
     confirmVolume: 1
     pitchRandomization: 0
-  defaultConfirmDelay: 0.3
+  defaultConfirmDelay: 1.5
   defaultSwitchVolume: 1
   defaultConfirmVolume: 1
   logValidationWarnings: 1
