@@ -9,8 +9,6 @@ Prefer gameplay-tunable kinematic systems over full Rigidbody naval physics unle
 - Git repository root is one folder above `Assets/` at `BattleShip/`; when searching for project-wide files, look there too.
 - `Core/` - main ship movement, propulsion, rudder, maneuvering, visual heel, wave motion, config, combat profiles.
 - `UI/` - Unity UI Toolkit screens and controls.
-- `UI/speedo/` - engine telegraph and speedometer UI experiments.
-- `UI/Rudder/` - rudder slider UI experiments.
 - `Scenes/` - Unity scenes and scene-specific prototypes.
 - `Docs/tracker/` - project tracker notes, with task files in `tasks/` and `todo_task_list.md` as the summary registry.
 - `BattleShip_ShipMovement_Context.md` - long-form design context for ship movement decisions.
