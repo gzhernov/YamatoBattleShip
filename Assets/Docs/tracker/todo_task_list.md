@@ -217,7 +217,7 @@
 - **Номер:** `26`
 - **Краткое описание:** Возможность обзора под водой с отдельным режимом камеры и визуальными настройками подводной сцены.
 - **Ссылка на файл:** [underwater_view_mode_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/underwater_view_mode_task.md)
-- **Статус:** `todo`
+- **Статус:** `Done`
 - **Включена в релиз:** `нет`
 
 ---
@@ -235,7 +235,7 @@
 - **Номер:** `28`
 - **Краткое описание:** Контроллер дыма из трубы с параметрами, зависящими от режима хода и состояния движения.
 - **Ссылка на файл:** [funnel_smoke_controller_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/funnel_smoke_controller_task.md)
-- **Статус:** `todo`
+- **Статус:** `Done`
 - **Включена в релиз:** `целевой mvp`
 
 ---
@@ -247,3 +247,29 @@
 - **Статус:** `todo`
 - **Включена в релиз:** `целевой mvp`
 
+---
+
+# 30 - Double transform для мира
+- **Номер:** `30`
+- **Краткое описание:** Переход на `double` для координат и трансформов в системах `OpenWorld`, `OpenWorldAgent` и `Floating Origin` для стабильности на больших дистанциях.
+- **Ссылка на файл:** [double_transform_openworld_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/double_transform_openworld_task.md)
+- **Статус:** `todo`
+- **Включена в релиз:** `нет`
+
+---
+
+# 31 - Единая система input
+- **Номер:** `31`
+- **Краткое описание:** Единая система ввода для управления кораблём, камерой и интерфейсом с согласованными действиями и обработкой режимов управления.
+- **Ссылка на файл:** [unified_input_system_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/unified_input_system_task.md)
+- **Статус:** `todo`
+- **Включена в релиз:** `целевой mvp`
+
+---
+
+# 32 - Концепт HUD UI
+- **Номер:** `32`
+- **Краткое описание:** Концептуальная проработка HUD-интерфейса: компоновка приборов, визуальный стиль, иерархия элементов и читаемость в бою.
+- **Ссылка на файл:** [hud_ui_concept_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/hud_ui_concept_task.md)
+- **Статус:** `todo`
+- **Включена в релиз:** `целевой mvp`
