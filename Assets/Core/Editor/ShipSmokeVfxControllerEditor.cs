@@ -1,11 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(ShipSmokeVfxController))]
+[CustomEditor(typeof(EngineVfxController))]
 public class ShipSmokeVfxControllerEditor : Editor
 {
     private SerializedProperty shipStatuses;
-    private SerializedProperty smokeVfxConfigOverride;
     private SerializedProperty smokeBindings;
     private SerializedProperty logDebugInfo;
 
@@ -14,7 +13,6 @@ public class ShipSmokeVfxControllerEditor : Editor
     private void OnEnable()
     {
         shipStatuses = serializedObject.FindProperty("shipStatuses");
-        smokeVfxConfigOverride = serializedObject.FindProperty("smokeVfxConfigOverride");
         smokeBindings = serializedObject.FindProperty("smokeBindings");
         logDebugInfo = serializedObject.FindProperty("logDebugInfo");
     }
@@ -24,25 +22,23 @@ public class ShipSmokeVfxControllerEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.PropertyField(shipStatuses);
-        EditorGUILayout.PropertyField(smokeVfxConfigOverride);
-
         EditorGUILayout.Space();
 
-        bool hasConfigSource = smokeVfxConfigOverride.objectReferenceValue != null || shipStatuses.objectReferenceValue != null;
+        bool hasConfigSource = HasEngineTelegraphConfig();
 
         if (!hasConfigSource)
         {
             EditorGUILayout.HelpBox(
-                "Назначьте Smoke VFX Config в override или у ShipConfig через ShipStatuses, чтобы синхронизация режимов работала.",
+                "Назначьте ShipStatuses с доступным EngineTelegraphConfig, чтобы синхронизировать режимы дыма.",
                 MessageType.Info
             );
         }
 
         using (new EditorGUI.DisabledScope(!hasConfigSource))
         {
-            if (GUILayout.Button("Sync From Smoke Config"))
+            if (GUILayout.Button("Sync From Engine Telegraph Config"))
             {
-                SyncFromSmokeConfig();
+                SyncFromEngineTelegraphConfig();
             }
         }
 
@@ -58,12 +54,12 @@ public class ShipSmokeVfxControllerEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void SyncFromSmokeConfig()
+    private void SyncFromEngineTelegraphConfig()
     {
         serializedObject.ApplyModifiedProperties();
 
-        ShipSmokeVfxController controller = (ShipSmokeVfxController)target;
-        int syncedCount = controller.SyncFromSmokeConfig();
+        EngineVfxController controller = (EngineVfxController)target;
+        int syncedCount = controller.SyncFromEngineTelegraphConfig();
 
         EditorUtility.SetDirty(controller);
         AssetDatabase.SaveAssets();
@@ -71,6 +67,26 @@ public class ShipSmokeVfxControllerEditor : Editor
 
         syncSummary = syncedCount > 0
             ? $"Синхронизировано {syncedCount} привязок дыма."
-            : "Синхронизация пропущена: конфиг дыма не назначен или пустой.";
+            : "Синхронизация пропущена: EngineTelegraphConfig не назначен или пустой.";
+    }
+
+    private bool HasEngineTelegraphConfig()
+    {
+        EngineVfxController controller = (EngineVfxController)target;
+
+        if (controller == null)
+            return false;
+
+        ShipStatuses statuses = controller.GetComponentInParent<ShipStatuses>();
+
+        if (statuses == null)
+        {
+            statuses = controller.GetComponent<ShipStatuses>();
+        }
+
+        if (statuses == null || statuses.ShipConfig == null)
+            return false;
+
+        return statuses.ShipConfig.EngineTelegraphConfig != null;
     }
 }
