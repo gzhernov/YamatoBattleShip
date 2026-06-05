@@ -14,7 +14,6 @@ public class ShipConfig : ScriptableObject
     [SerializeField] private EngineTelegraphAudioConfig engineTelegraphAudioConfig;
     [SerializeField] private EngineSoundConfig engineSoundConfig;
     [SerializeField] private SimpleEngineSoundConfig simpleEngineSoundConfig;
-    [SerializeField] private SmokeVfxConfig smokeVfxConfig;
     [SerializeField] private EngineTelegraphSector initialEngineTelegraphSector = EngineTelegraphSector.Stop;
 
     [Header("Rudder")]
@@ -153,7 +152,6 @@ public class ShipConfig : ScriptableObject
     public EngineTelegraphAudioConfig EngineTelegraphAudioConfig => engineTelegraphAudioConfig;
     public EngineSoundConfig EngineSoundConfig => engineSoundConfig;
     public SimpleEngineSoundConfig SimpleEngineSoundConfig => simpleEngineSoundConfig;
-    public SmokeVfxConfig SmokeVfxConfig => smokeVfxConfig;
     public EngineTelegraphSector InitialEngineTelegraphSector => initialEngineTelegraphSector;
 
     public RudderAudioConfig RudderAudioConfig => rudderAudioConfig;
@@ -295,11 +293,6 @@ public class ShipConfig : ScriptableObject
         if (simpleEngineSoundConfig != null)
         {
             simpleEngineSoundConfig.ValidateAgainst(engineTelegraphConfig, this);
-        }
-
-        if (smokeVfxConfig != null)
-        {
-            smokeVfxConfig.ValidateAgainst(engineTelegraphConfig, this);
         }
 
         if (rudderAudioConfig != null)

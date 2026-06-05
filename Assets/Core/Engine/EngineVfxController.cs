@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class ShipSmokeVfxController : MonoBehaviour
+public class EngineVfxController : MonoBehaviour
 {
     [Serializable]
     public class SmokeVfxBinding
@@ -17,9 +17,6 @@ public class ShipSmokeVfxController : MonoBehaviour
     [Header("References")]
     [Tooltip("Необязательно. Если ссылка не задана, контроллер сначала ищет ShipStatuses у родителя, затем в сцене.")]
     [SerializeField] private ShipStatuses shipStatuses;
-
-    [Tooltip("Необязательно. Локально переопределяет SmokeVfxConfig из ShipConfig.")]
-    [SerializeField] private SmokeVfxConfig smokeVfxConfigOverride;
 
     [Tooltip("Список режимов дыма и соответствующих root-объектов в сцене.")]
     [SerializeField] private SmokeVfxBinding[] smokeBindings = Array.Empty<SmokeVfxBinding>();
@@ -74,35 +71,35 @@ public class ShipSmokeVfxController : MonoBehaviour
         }
     }
 
-    public int SyncFromSmokeConfig()
+    public int SyncFromEngineTelegraphConfig()
     {
-        SmokeVfxConfig activeConfig = GetActiveSmokeConfig();
+        EngineTelegraphConfig telegraphConfig = GetActiveEngineTelegraphConfig();
 
-        if (activeConfig == null || activeConfig.ModeEntries == null || activeConfig.ModeEntries.Length == 0)
+        if (telegraphConfig == null || !telegraphConfig.HasSectors)
             return 0;
 
         Dictionary<EngineTelegraphSector, SmokeVfxBinding> existingBindings = BuildBindingMap();
-        SmokeVfxBinding[] syncedBindings = new SmokeVfxBinding[activeConfig.ModeEntries.Length];
+        SmokeVfxBinding[] syncedBindings = new SmokeVfxBinding[telegraphConfig.SectorCount];
         int syncedCount = 0;
 
-        for (int i = 0; i < activeConfig.ModeEntries.Length; i++)
+        for (int i = 0; i < telegraphConfig.SectorCount; i++)
         {
-            SmokeVfxModeEntry modeEntry = activeConfig.ModeEntries[i];
+            EngineTelegraphSectorData sectorData = telegraphConfig.GetSectorDataByIndex(i);
 
-            if (modeEntry == null)
+            if (sectorData == null)
                 continue;
 
             SmokeVfxBinding binding;
 
-            if (!existingBindings.TryGetValue(modeEntry.sector, out binding))
+            if (!existingBindings.TryGetValue(sectorData.sector, out binding))
             {
-                binding = CreateDefaultBinding(modeEntry.sector);
+                binding = CreateDefaultBinding(sectorData.sector);
             }
 
             if (binding == null)
                 continue;
 
-            binding.sector = modeEntry.sector;
+            binding.sector = sectorData.sector;
             syncedBindings[syncedCount] = binding;
             syncedCount++;
         }
@@ -248,17 +245,7 @@ public class ShipSmokeVfxController : MonoBehaviour
             if (particleSystem == null)
                 continue;
 
-            if (!particleSystem.gameObject.activeSelf)
-            {
-                particleSystem.gameObject.SetActive(true);
-            }
-        }
-
-        for (int i = 0; i < particleSystems.Length; i++)
-        {
-            ParticleSystem particleSystem = particleSystems[i];
-
-            if (particleSystem == null)
+            if (!particleSystem.gameObject.activeInHierarchy)
                 continue;
 
             particleSystem.Play(true);
@@ -337,15 +324,12 @@ public class ShipSmokeVfxController : MonoBehaviour
         return existingBindings;
     }
 
-    private SmokeVfxConfig GetActiveSmokeConfig()
+    private EngineTelegraphConfig GetActiveEngineTelegraphConfig()
     {
-        if (smokeVfxConfigOverride != null)
-            return smokeVfxConfigOverride;
-
         if (shipStatuses == null || shipStatuses.ShipConfig == null)
             return null;
 
-        return shipStatuses.ShipConfig.SmokeVfxConfig;
+        return shipStatuses.ShipConfig.EngineTelegraphConfig;
     }
 
     private static SmokeVfxBinding CreateDefaultBinding(EngineTelegraphSector sector)
