@@ -704,7 +704,7 @@ RudderSliderView Smooth Speed = 4–6
 1. Тонкая настройка параметров разгона, выбега и торможения.
 2. Настройка кривых Rudder To Turn Effectiveness и Speed To Rudder Effectiveness.
 3. Настройка Rudder To Drag Effectiveness.
-4. Этап 2 манёвренности: pivot point / вынос кормы при развороте.
+4. Этап 2 манёвренности: pivot point / вынос кормы при развороте. В первой версии точка стационарная и смещена вперёд вдоль корпуса.
 5. Улучшение ShipPropellerVisualController через отдельную модель propeller rpm.
 6. Добавление wake/foam эффекта для ощущения скорости.
 7. Добавление damage modifiers: повреждение руля, двигателя, винтов.

@@ -3,6 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(ShipStatuses))]
 public class ShipMovementController : MonoBehaviour
 {
+    private const float StationarySpeedEpsilon = 0.0001f;
+
     [Header("References")]
     [SerializeField] private ShipStatuses shipStatuses;
 
@@ -219,14 +221,19 @@ public class ShipMovementController : MonoBehaviour
             config.TurnAcceleration * deltaTime
         );
 
+        if (Mathf.Abs(currentSpeedUnityUnitsPerSecond) <= StationarySpeedEpsilon)
+        {
+            currentYawRateDegreesPerSecond = 0f;
+            return;
+        }
+
         if (Mathf.Approximately(currentYawRateDegreesPerSecond, 0f))
             return;
 
-        transform.Rotate(
-            0f,
-            currentYawRateDegreesPerSecond * deltaTime,
-            0f,
-            Space.World
+        transform.RotateAround(
+            GetTurnPivotWorldPosition(config),
+            Vector3.up,
+            currentYawRateDegreesPerSecond * deltaTime
         );
     }
 
@@ -237,6 +244,12 @@ public class ShipMovementController : MonoBehaviour
 
         Vector3 movementDirectionVector = transform.forward * MovementDirectionMultiplier;
         transform.position += movementDirectionVector * currentSpeedUnityUnitsPerSecond * deltaTime;
+    }
+
+    private Vector3 GetTurnPivotWorldPosition(ShipConfig config)
+    {
+        Vector3 actualForwardDirection = transform.forward * MovementDirectionMultiplier;
+        return transform.position + actualForwardDirection * config.TurnPivotForwardOffset;
     }
 
     private void RefreshConvertedSpeeds()

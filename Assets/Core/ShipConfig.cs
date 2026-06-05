@@ -80,6 +80,9 @@ public class ShipConfig : ScriptableObject
     [Tooltip("Максимальный рабочий радиус циркуляции в длинах корпуса при слабом руле/низкой эффективности.")]
     [SerializeField] private float maximumTurningRadiusInShipLengths = 20f;
 
+    [Tooltip("Из какой части длины корпуса считать точку вращения вперёд от центра. Точка находится на продольной оси корабля и даёт вынос кормы при повороте.")]
+    [SerializeField] private float turnPivotForwardOffsetInShipLengths = 0.18f;
+
     [Tooltip("Кривая влияния угла руля на поворот. X: 0..1 отклонение руля, Y: 0..1 эффективность.")]
     [SerializeField] private AnimationCurve rudderToTurnEffectiveness = new AnimationCurve(
         new Keyframe(0f, 0f),
@@ -183,6 +186,8 @@ public class ShipConfig : ScriptableObject
     public float MaximumTurningRadiusInShipLengths => maximumTurningRadiusInShipLengths;
     public float MinimumTurningRadius => shipLength * minimumTurningRadiusInShipLengths;
     public float MaximumTurningRadius => shipLength * maximumTurningRadiusInShipLengths;
+    public float TurnPivotForwardOffsetInShipLengths => turnPivotForwardOffsetInShipLengths;
+    public float TurnPivotForwardOffset => shipLength * turnPivotForwardOffsetInShipLengths;
     public AnimationCurve RudderToTurnEffectiveness => rudderToTurnEffectiveness;
     public AnimationCurve SpeedToRudderEffectiveness => speedToRudderEffectiveness;
     public float TurnAcceleration => turnAcceleration;
@@ -254,6 +259,7 @@ public class ShipConfig : ScriptableObject
         shipLength = Mathf.Max(0.01f, shipLength);
         minimumTurningRadiusInShipLengths = Mathf.Max(0.01f, minimumTurningRadiusInShipLengths);
         maximumTurningRadiusInShipLengths = Mathf.Max(minimumTurningRadiusInShipLengths, maximumTurningRadiusInShipLengths);
+        turnPivotForwardOffsetInShipLengths = Mathf.Clamp(turnPivotForwardOffsetInShipLengths, 0f, 0.5f);
         turnAcceleration = Mathf.Max(0f, turnAcceleration);
         turnRateMultiplier = Mathf.Max(0f, turnRateMultiplier);
 

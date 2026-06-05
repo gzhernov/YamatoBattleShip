@@ -34,6 +34,7 @@ public class ShipConfigEditor : Editor
     private SerializedProperty shipLength;
     private SerializedProperty minimumTurningRadiusInShipLengths;
     private SerializedProperty maximumTurningRadiusInShipLengths;
+    private SerializedProperty turnPivotForwardOffsetInShipLengths;
     private SerializedProperty rudderToTurnEffectiveness;
     private SerializedProperty speedToRudderEffectiveness;
     private SerializedProperty turnAcceleration;
@@ -82,6 +83,7 @@ public class ShipConfigEditor : Editor
         shipLength = serializedObject.FindProperty("shipLength");
         minimumTurningRadiusInShipLengths = serializedObject.FindProperty("minimumTurningRadiusInShipLengths");
         maximumTurningRadiusInShipLengths = serializedObject.FindProperty("maximumTurningRadiusInShipLengths");
+        turnPivotForwardOffsetInShipLengths = serializedObject.FindProperty("turnPivotForwardOffsetInShipLengths");
         rudderToTurnEffectiveness = serializedObject.FindProperty("rudderToTurnEffectiveness");
         speedToRudderEffectiveness = serializedObject.FindProperty("speedToRudderEffectiveness");
         turnAcceleration = serializedObject.FindProperty("turnAcceleration");
@@ -168,12 +170,13 @@ public class ShipConfigEditor : Editor
 
         DrawSection(
             "Maneuvering",
-            $"length {shipLength.floatValue:0.#}, radius {minimumTurningRadiusInShipLengths.floatValue:0.#}-{maximumTurningRadiusInShipLengths.floatValue:0.#}L",
+            $"length {shipLength.floatValue:0.#}, radius {minimumTurningRadiusInShipLengths.floatValue:0.#}-{maximumTurningRadiusInShipLengths.floatValue:0.#}L, pivot {turnPivotForwardOffsetInShipLengths.floatValue:0.##}L",
             () =>
             {
                 EditorGUILayout.PropertyField(shipLength);
                 EditorGUILayout.PropertyField(minimumTurningRadiusInShipLengths);
                 EditorGUILayout.PropertyField(maximumTurningRadiusInShipLengths);
+                EditorGUILayout.PropertyField(turnPivotForwardOffsetInShipLengths);
                 EditorGUILayout.PropertyField(rudderToTurnEffectiveness);
                 EditorGUILayout.PropertyField(speedToRudderEffectiveness);
                 EditorGUILayout.PropertyField(turnAcceleration);
