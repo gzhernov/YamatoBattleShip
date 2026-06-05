@@ -257,6 +257,5 @@ public class SimpleEngineSoundController : MonoBehaviour
 
         audioSource.playOnAwake = false;
         audioSource.loop = true;
-        audioSource.spatialBlend = 0f;
     }
 }
