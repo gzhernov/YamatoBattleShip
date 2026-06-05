@@ -46,6 +46,13 @@ Prefer gameplay-tunable kinematic systems over full Rigidbody naval physics unle
 - Do not introduce Rigidbody-based ship physics unless the task explicitly changes the architecture.
 - If changing movement behavior, check `BattleShip_ShipMovement_Context.md` first.
 
+## GitHub
+- Текущий GitHub-репозиторий: `gzhernov/YamatoBattleShip`.
+- С GitHub работать через GitHub API.
+- Создавать GitHub issue через JSON с явными Unicode-escape последовательностями, чтобы GitHub получил нормальный русский текст без потерь кодировки.
+- Для GitHub описание задачи полностью писать через `\uXXXX`, чтобы текст сохранялся в GitHub без потерь кодировки.
+- Токен для GitHub хранится в файле `Assets/GIT_HUB_TOKEN`.
+
 ## Validation
 After code changes:
 - Let Unity compile if possible.
