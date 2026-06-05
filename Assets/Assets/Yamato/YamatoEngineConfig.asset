@@ -40,4 +40,4 @@ MonoBehaviour:
   - sector: 8
     displayName: "\u041F\u041E\u041B\u041D\u042B\u0419 \u0412\u041F\u0415\u0420\u0401\u0414"
     angle: 120
-    speedKnots: 25
+    speedKnots: 27

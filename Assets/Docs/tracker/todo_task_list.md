@@ -73,7 +73,7 @@
 - **Номер:** `10`
 - **Краткое описание:** Кильватерный след и рябь на воде от движения корабля с учетом скорости, режима хода и масштаба судна.
 - **Ссылка на файл:** [wake_trail_and_water_ripple_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/wake_trail_and_water_ripple_task.md)
-- **Статус:** `in progress`
+- **Статус:** `todo`
 - **Включена в релиз:** `0.1`
 
 ---
@@ -273,3 +273,12 @@
 - **Ссылка на файл:** [hud_ui_concept_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/hud_ui_concept_task.md)
 - **Статус:** `todo`
 - **Включена в релиз:** `целевой mvp`
+
+---
+
+# 33 - Глобальная карта
+- **Номер:** `33`
+- **Краткое описание:** Режим глобальной карты с переходами на локальную карту и соответствием островов карте региона.
+- **Ссылка на файл:** [global_map_mode_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/global_map_mode_task.md)
+- **Статус:** `todo`
+- **Включена в релиз:** `нет`

@@ -20,7 +20,7 @@ MonoBehaviour:
   rudderAudioConfig: {fileID: 11400000, guid: 9d3a5a919bf70da4c9f4e312f948484f, type: 2}
   rudderDefaultPosition: 2
   rudderTotalPositions: 5
-  rudderShiftTimeFromCenterToFull: 22
+  rudderShiftTimeFromCenterToFull: 15
   maxRudderAngleDegrees: 35
   knotsToUnityUnitsPerSecond: 0.8
   simulationSpeedMultiplier: 1
@@ -85,6 +85,7 @@ MonoBehaviour:
   shipLength: 263
   minimumTurningRadiusInShipLengths: 4.5
   maximumTurningRadiusInShipLengths: 20
+  turnPivotForwardOffsetInShipLengths: 0.5
   rudderToTurnEffectiveness:
     serializedVersion: 2
     m_Curve:
