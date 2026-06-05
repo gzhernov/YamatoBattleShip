@@ -196,7 +196,7 @@
 
 ---
 
-# 29 - Аудио двигателя
+# 29 - Full Аудио двигателя
 - **Номер:** `29`
 - **Краткое описание:** Аудио-контроллер двигателя: слои звука, кроссфейды и зависимость от телеграфа/скорости/ускорения.
 - **Ссылка на файл:** [engine_audio_controller_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/engine_audio_controller_task.md)
@@ -237,4 +237,22 @@
 - **Краткое описание:** Режим глобальной карты с переходами на локальную карту и соответствием островов карте региона.
 - **Ссылка на файл:** [global_map_mode_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/global_map_mode_task.md)
 - **Статус:** `todo`
+- **Включена в релиз:** `нет`
+
+---
+
+# 34 - Крен руля
+- **Номер:** `34`
+- **Краткое описание:** Исправить резкий возврат корабля в нейтральное положение по крену при возврате руля в `ShipHeelVisualController`.
+- **Ссылка на файл:** [ship_heel_visual_controller_rudder_return_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/ship_heel_visual_controller_rudder_return_task.md)
+- **Статус:** `todo`
+- **Включена в релиз:** `нет`
+
+---
+
+# 35 - Контроллер двигателя
+- **Номер:** `35`
+- **Краткое описание:** Продумать контроллер двигателя с правилами работы и последовательным переключением режимов через промежуточные ступени.
+- **Ссылка на файл:** [engine_controller_sequential_modes_task.md](/C:/dev/unity/BattleShip/Assets/Docs/tracker/tasks/engine_controller_sequential_modes_task.md)
+- **Статус:** `аналитика`
 - **Включена в релиз:** `нет`

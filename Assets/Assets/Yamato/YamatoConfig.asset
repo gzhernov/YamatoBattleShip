@@ -190,7 +190,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   turnAcceleration: 4
   turnRateMultiplier: 1.5
-  maxManeuverHeelAngle: 9
+  maxManeuverHeelAngle: 5
   yawRateForFullHeel: 0.6
   speedToHeelEffectiveness:
     serializedVersion: 2
@@ -205,22 +205,22 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.2
-      value: 0.25
-      inSlope: 0
-      outSlope: 0
+      time: 0.26039192
+      value: 0.21979006
+      inSlope: 1.3401328
+      outSlope: 1.3401328
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.30181745
       outWeight: 0
     - serializedVersion: 3
-      time: 0.5
-      value: 0.8
-      inSlope: 0
-      outSlope: 0
+      time: 0.55255127
+      value: 0.7312134
+      inSlope: 1.0537813
+      outSlope: 1.0537813
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.1624224
       outWeight: 0
     - serializedVersion: 3
       time: 1
