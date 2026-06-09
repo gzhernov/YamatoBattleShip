@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -35,6 +36,9 @@ public class UniversalIntSlider : MonoBehaviour
 
     [Tooltip("Если включено, компонент будет писать ошибки конфигурации в лог.")]
     [SerializeField] private bool logConfigurationErrors = true;
+
+    [Header("События")]
+    [SerializeField] private UnityEvent<int> onValueChanged;
 
     private UniversalIntSliderInputProxy trackProxy;
     private UniversalIntSliderInputProxy handleProxy;
@@ -363,6 +367,7 @@ public class UniversalIntSlider : MonoBehaviour
         }
 
         OnValueChanged?.Invoke(currentValue);
+        onValueChanged?.Invoke(currentValue);
     }
 
     private void UpdateHandleVisual()
