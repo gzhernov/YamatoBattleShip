@@ -19,15 +19,8 @@ public class EngineTelegraphReducerView : MonoBehaviour
     {
         ResolveReferences();
 
-        if (slider == null)
+        if (!ValidateSetup())
         {
-            Debug.LogError("EngineTelegraphReducerView: не назначен UniversalIntSlider.", this);
-            return;
-        }
-
-        if (shipStatuses == null)
-        {
-            Debug.LogError("EngineTelegraphReducerView: ShipStatuses не найден.", this);
             return;
         }
 
@@ -83,5 +76,43 @@ public class EngineTelegraphReducerView : MonoBehaviour
         {
             shipStatuses = FindFirstObjectByType<ShipStatuses>();
         }
+    }
+
+    private bool ValidateSetup()
+    {
+        if (slider == null)
+        {
+            Debug.LogError("EngineTelegraphReducerView: не назначен UniversalIntSlider.", this);
+            return false;
+        }
+
+        if (shipStatuses == null)
+        {
+            Debug.LogError("EngineTelegraphReducerView: ShipStatuses не найден.", this);
+            return false;
+        }
+
+        if (slider.MaxValue <= 0)
+        {
+            Debug.LogError("EngineTelegraphReducerView: у слайдера maxValue должен быть больше 0.", this);
+            return false;
+        }
+
+        if (slider.MinValue < 0)
+        {
+            Debug.LogError("EngineTelegraphReducerView: у слайдера minValue не должен быть отрицательным.", this);
+            return false;
+        }
+
+        if (slider.MinValue > 1)
+        {
+            Debug.LogError(
+                "EngineTelegraphReducerView: для редуктора ожидается шкала вида 0..N или 1..N.",
+                this
+            );
+            return false;
+        }
+
+        return true;
     }
 }

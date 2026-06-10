@@ -48,6 +48,8 @@ public class UniversalIntSlider : MonoBehaviour
     private int currentValue;
 
     public int Value => currentValue;
+    public int MinValue => minValue;
+    public int MaxValue => maxValue;
 
     public event Action<int> OnValueChanged;
 
@@ -118,12 +120,12 @@ public class UniversalIntSlider : MonoBehaviour
 
     public float GetNormalizedValue()
     {
-        if (!HasValidRange())
+        if (!HasValidNormalizedRange())
         {
             return 0f;
         }
 
-        return ValueToNormalized(currentValue);
+        return ValueToNormalizedRange(currentValue);
     }
 
     internal void HandleTrackPointerDown(PointerEventData eventData)
@@ -342,6 +344,29 @@ public class UniversalIntSlider : MonoBehaviour
         return Mathf.InverseLerp(minValue, maxValue, ClampValueToRange(value));
     }
 
+    private int NormalizedRangeToValue(float normalizedValue)
+    {
+        float clampedNormalized = Mathf.Clamp01(normalizedValue);
+
+        if (!HasValidNormalizedRange())
+        {
+            return ClampValueToRange(minValue);
+        }
+
+        float rawValue = clampedNormalized * maxValue;
+        return ClampValueToRange(Mathf.RoundToInt(rawValue));
+    }
+
+    private float ValueToNormalizedRange(int value)
+    {
+        if (!HasValidNormalizedRange())
+        {
+            return 0f;
+        }
+
+        return Mathf.Clamp01(ClampValueToRange(value) / (float)maxValue);
+    }
+
     private int ClampValueToRange(int value)
     {
         if (!HasValidRange())
@@ -352,6 +377,11 @@ public class UniversalIntSlider : MonoBehaviour
         return Mathf.Clamp(value, minValue, maxValue);
     }
 
+    private bool HasValidNormalizedRange()
+    {
+        return HasValidRange() && maxValue > 0;
+    }
+
     private void SetNormalizedValueInternal(float normalizedValue, bool sendCallback)
     {
         if (!TryEnsureValidSetup())
@@ -359,7 +389,7 @@ public class UniversalIntSlider : MonoBehaviour
             return;
         }
 
-        int roundedValue = NormalizedToValue(Mathf.Clamp01(normalizedValue));
+        int roundedValue = NormalizedRangeToValue(normalizedValue);
         SetValueInternal(roundedValue, sendCallback);
     }
 
