@@ -94,6 +94,7 @@ public class ShipMovementController : MonoBehaviour
         }
 
         shipStatuses.OnEngineTelegraphChanged += OnEngineTelegraphChanged;
+        shipStatuses.OnEngineTelegraphReducerChanged += OnEngineTelegraphReducerChanged;
         RefreshTargetSpeedFromStatuses();
         PublishNavigationStatus();
         RefreshRuntimeStatus();
@@ -104,6 +105,7 @@ public class ShipMovementController : MonoBehaviour
         if (shipStatuses != null)
         {
             shipStatuses.OnEngineTelegraphChanged -= OnEngineTelegraphChanged;
+            shipStatuses.OnEngineTelegraphReducerChanged -= OnEngineTelegraphReducerChanged;
         }
     }
 
@@ -131,10 +133,12 @@ public class ShipMovementController : MonoBehaviour
         EngineTelegraphSectorData sectorData
     )
     {
-        if (sectorData == null)
-            return;
+        RefreshTargetSpeedFromStatuses();
+    }
 
-        SetTargetSpeedKnots(sectorData.speedKnots);
+    private void OnEngineTelegraphReducerChanged(int reducerPercent)
+    {
+        RefreshTargetSpeedFromStatuses();
     }
 
     private void RefreshTargetSpeedFromStatuses()
@@ -142,7 +146,40 @@ public class ShipMovementController : MonoBehaviour
         if (shipStatuses == null)
             return;
 
-        SetTargetSpeedKnots(shipStatuses.GetCurrentEngineTelegraphSpeedKnots());
+        EngineTelegraphConfig engineTelegraphConfig = shipStatuses.EngineTelegraphConfig;
+
+        if (engineTelegraphConfig == null || !engineTelegraphConfig.HasSectors)
+        {
+            SetTargetSpeedKnots(0f);
+            return;
+        }
+
+        EngineTelegraphSector currentSector = shipStatuses.CurrentEngineTelegraphSector;
+        EngineTelegraphSectorData currentSectorData = shipStatuses.GetCurrentEngineTelegraphSectorData();
+
+        if (currentSectorData == null)
+        {
+            SetTargetSpeedKnots(0f);
+            return;
+        }
+
+        if (currentSector == EngineTelegraphSector.Stop)
+        {
+            SetTargetSpeedKnots(0f);
+            return;
+        }
+
+        int currentSectorIndex = shipStatuses.GetEngineTelegraphSectorIndex(currentSector);
+        EngineTelegraphSectorData previousSectorData = engineTelegraphConfig.GetSectorDataByIndex(currentSectorIndex - 1);
+
+        float reducer01 = shipStatuses.EngineTelegraphReducerPercent / 100f;
+        float fromSpeed = previousSectorData != null
+            ? previousSectorData.speedKnots
+            : currentSectorData.speedKnots;
+        float toSpeed = currentSectorData.speedKnots;
+        float effectiveSpeed = Mathf.Lerp(fromSpeed, toSpeed, reducer01);
+
+        SetTargetSpeedKnots(effectiveSpeed);
     }
 
     private void SetTargetSpeedKnots(float newTargetSpeedKnots)

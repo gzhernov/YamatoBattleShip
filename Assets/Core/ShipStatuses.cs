@@ -23,6 +23,7 @@ public class ShipStatuses : MonoBehaviour
     [SerializeField, ReadOnlyInspector] private EngineTelegraphSector engineTelegraphSector;
     [SerializeField, ReadOnlyInspector] private int engineTelegraphSectorIndex;
     [SerializeField, ReadOnlyInspector] private string engineTelegraphSectorName = "UNKNOWN";
+    [SerializeField, ReadOnlyInspector] private int engineTelegraphReducerPercent = 100;
 
     [FormerlySerializedAs("engineTelegraphSpeedValue")]
     [SerializeField, ReadOnlyInspector] private float engineTelegraphSpeedKnots;
@@ -54,6 +55,7 @@ public class ShipStatuses : MonoBehaviour
 
     public int EngineTelegraphSectorIndex => engineTelegraphSectorIndex;
     public string EngineTelegraphSectorName => engineTelegraphSectorName;
+    public int EngineTelegraphReducerPercent => engineTelegraphReducerPercent;
     public float EngineTelegraphSpeedKnots => engineTelegraphSpeedKnots;
     public float EngineTelegraphAngle => engineTelegraphAngle;
     public float CurrentSpeedKnots => currentSpeedKnots;
@@ -66,6 +68,7 @@ public class ShipStatuses : MonoBehaviour
     public event Action<float> OnTargetRudderValueChanged;
     public event Action<float> OnActualRudderValueChanged;
     public event Action<EngineTelegraphSector, EngineTelegraphSectorData> OnEngineTelegraphChanged;
+    public event Action<int> OnEngineTelegraphReducerChanged;
     public event Action<float, float> OnNavigationStatusChanged;
 
     private void Awake()
@@ -104,6 +107,7 @@ public class ShipStatuses : MonoBehaviour
     private void InitializeEngineTelegraphStatus()
     {
         EngineTelegraphConfig engineTelegraphConfig = EngineTelegraphConfig;
+        engineTelegraphReducerPercent = 100;
 
         if (shipConfig == null)
         {
@@ -259,6 +263,26 @@ public class ShipStatuses : MonoBehaviour
         }
 
         OnEngineTelegraphChanged?.Invoke(engineTelegraphSector, sectorData);
+    }
+
+    public void SetEngineTelegraphReducerPercent(int percent)
+    {
+        int clampedPercent = Mathf.Clamp(percent, 0, 100);
+
+        if (engineTelegraphReducerPercent == clampedPercent)
+            return;
+
+        engineTelegraphReducerPercent = clampedPercent;
+
+        if (logChanges)
+        {
+            Debug.Log(
+                $"ShipStatuses: редуктор телеграфа -> {engineTelegraphReducerPercent}%",
+                this
+            );
+        }
+
+        OnEngineTelegraphReducerChanged?.Invoke(engineTelegraphReducerPercent);
     }
 
     public void SetEngineTelegraphSectorByIndex(int index)
@@ -494,6 +518,8 @@ public class ShipStatuses : MonoBehaviour
                 );
             }
         }
+
+        engineTelegraphReducerPercent = Mathf.Clamp(engineTelegraphReducerPercent, 0, 100);
 
         RefreshTargetRudderRuntimeStatus();
         RefreshActualRudderRuntimeStatus();

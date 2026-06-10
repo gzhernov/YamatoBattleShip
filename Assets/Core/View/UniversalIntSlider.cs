@@ -106,6 +106,16 @@ public class UniversalIntSlider : MonoBehaviour
         SetValueInternal(value, false);
     }
 
+    public void SetNormalizedValue(float normalizedValue)
+    {
+        SetNormalizedValueInternal(normalizedValue, true);
+    }
+
+    public void SetNormalizedValueWithoutNotify(float normalizedValue)
+    {
+        SetNormalizedValueInternal(normalizedValue, false);
+    }
+
     public float GetNormalizedValue()
     {
         if (!HasValidRange())
@@ -340,6 +350,17 @@ public class UniversalIntSlider : MonoBehaviour
         }
 
         return Mathf.Clamp(value, minValue, maxValue);
+    }
+
+    private void SetNormalizedValueInternal(float normalizedValue, bool sendCallback)
+    {
+        if (!TryEnsureValidSetup())
+        {
+            return;
+        }
+
+        int roundedValue = NormalizedToValue(Mathf.Clamp01(normalizedValue));
+        SetValueInternal(roundedValue, sendCallback);
     }
 
     private void SetValueInternal(int value, bool sendCallback)
