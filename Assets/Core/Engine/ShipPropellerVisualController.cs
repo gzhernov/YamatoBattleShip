@@ -1,20 +1,10 @@
 using UnityEngine;
 
-public enum ShipPropellerRotationSource
-{
-    EngineTelegraphOrder,
-    ShipSpeed
-}
-
 public class ShipPropellerVisualController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private ShipMovementController movementController;
+    [SerializeField] private ShipStatuses shipStatuses;
     [SerializeField] private Transform[] propellers;
-
-    [Header("Rotation Source")]
-    [Tooltip("Engine Telegraph Order — винты крутятся от команды двигателя. Ship Speed — старое поведение, от скорости корпуса.")]
-    [SerializeField] private ShipPropellerRotationSource rotationSource = ShipPropellerRotationSource.EngineTelegraphOrder;
 
     [Header("Rotation Axis")]
     [Tooltip("Локальная ось, вокруг которой вращается винт. Обычно Z. Если винт крутится неправильно — попробуй X или Y.")]
@@ -27,35 +17,22 @@ public class ShipPropellerVisualController : MonoBehaviour
     [SerializeField] private bool reverseWhenMovingBackward = true;
 
     [Header("Visual Speed")]
-    [Tooltip("При какой скорости режима/корпуса в узлах винты достигают максимальной визуальной скорости вращения.")]
+    [Tooltip("При какой скорости режима в узлах винты достигают максимальной визуальной скорости вращения.")]
     [SerializeField] private float speedForFullEffectKnots = 12f;
 
     [Tooltip("Максимальная визуальная скорость вращения винтов, градусов в секунду. Это не физика, а только видимость.")]
     [SerializeField] private float maxRotationSpeedDegreesPerSecond = 1080f;
 
-    [Tooltip("Минимальная заметная скорость вращения, если есть ненулевая команда двигателя/скорость корпуса.")]
+    [Tooltip("Минимальная заметная скорость вращения, если есть ненулевая команда двигателя.")]
     [SerializeField] private float minMovingRotationSpeedDegreesPerSecond = 120f;
 
     [Tooltip("Скорость плавного изменения вращения винтов при смене режима двигателя.")]
     [SerializeField] private float rotationSmoothSpeed = 8f;
 
-    [Header("Idle")]
-    [Tooltip("Крутить ли винты на малых оборотах, когда источник вращения равен нулю.")]
-    [SerializeField] private bool spinWhenStopped = false;
-
-    [Tooltip("Визуальная скорость вращения на месте, если Spin When Stopped включён.")]
-    [SerializeField] private float idleRotationSpeedDegreesPerSecond = 60f;
-
     [Header("Runtime Status")]
-    [SerializeField, ReadOnlyInspector] private float currentShipSpeedKnots;
-    [SerializeField, ReadOnlyInspector] private float engineOrderSpeedKnots;
-    [SerializeField, ReadOnlyInspector] private float sourceSpeedKnots;
     [SerializeField, ReadOnlyInspector] private float targetRotationSpeedDegreesPerSecond;
     [SerializeField, ReadOnlyInspector] private float currentRotationSpeedDegreesPerSecond;
 
-    public float CurrentShipSpeedKnots => currentShipSpeedKnots;
-    public float EngineOrderSpeedKnots => engineOrderSpeedKnots;
-    public float SourceSpeedKnots => sourceSpeedKnots;
     public float CurrentRotationSpeedDegreesPerSecond => currentRotationSpeedDegreesPerSecond;
 
     private void Awake()
@@ -65,12 +42,12 @@ public class ShipPropellerVisualController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (movementController == null)
+        if (shipStatuses == null)
         {
             ResolveReferences();
         }
 
-        if (movementController == null || propellers == null || propellers.Length == 0)
+        if (shipStatuses == null || propellers == null || propellers.Length == 0)
             return;
 
         UpdateTargetRotationSpeed();
@@ -80,37 +57,31 @@ public class ShipPropellerVisualController : MonoBehaviour
 
     private void ResolveReferences()
     {
-        if (movementController == null)
+        if (shipStatuses == null)
         {
-            movementController = GetComponent<ShipMovementController>();
+            shipStatuses = GetComponent<ShipStatuses>();
         }
 
-        if (movementController == null)
+        if (shipStatuses == null)
         {
-            movementController = GetComponentInParent<ShipMovementController>();
+            shipStatuses = GetComponentInParent<ShipStatuses>();
         }
     }
 
     private void UpdateTargetRotationSpeed()
     {
-        currentShipSpeedKnots = movementController.CurrentSpeedKnots;
-        engineOrderSpeedKnots = movementController.EngineOrderSpeedKnots;
-
-        sourceSpeedKnots = rotationSource == ShipPropellerRotationSource.EngineTelegraphOrder
-            ? engineOrderSpeedKnots
-            : currentShipSpeedKnots;
-
-        float absoluteSourceSpeedKnots = Mathf.Abs(sourceSpeedKnots);
-        bool hasSourceMotion = absoluteSourceSpeedKnots > 0.01f;
+        float engineOrderSpeedKnots = GetEngineOrderSpeedKnots();
+        float absoluteEngineOrderSpeedKnots = Mathf.Abs(engineOrderSpeedKnots);
+        bool hasEngineOrderMotion = absoluteEngineOrderSpeedKnots > 0.01f;
 
         float absoluteTargetRotationSpeed;
 
-        if (hasSourceMotion)
+        if (hasEngineOrderMotion)
         {
             float speedFactor = Mathf.InverseLerp(
                 0f,
                 speedForFullEffectKnots,
-                absoluteSourceSpeedKnots
+                absoluteEngineOrderSpeedKnots
             );
 
             absoluteTargetRotationSpeed = Mathf.Lerp(
@@ -121,19 +92,43 @@ public class ShipPropellerVisualController : MonoBehaviour
         }
         else
         {
-            absoluteTargetRotationSpeed = spinWhenStopped
-                ? idleRotationSpeedDegreesPerSecond
-                : 0f;
+            absoluteTargetRotationSpeed = 0f;
         }
 
         float direction = 1f;
 
-        if (reverseWhenMovingBackward && sourceSpeedKnots < -0.01f)
+        if (reverseWhenMovingBackward && engineOrderSpeedKnots < -0.01f)
         {
             direction = -1f;
         }
 
         targetRotationSpeedDegreesPerSecond = absoluteTargetRotationSpeed * direction;
+    }
+
+    private float GetEngineOrderSpeedKnots()
+    {
+        if (shipStatuses == null)
+            return 0f;
+
+        EngineTelegraphConfig engineTelegraphConfig = shipStatuses.EngineTelegraphConfig;
+
+        if (engineTelegraphConfig == null || !engineTelegraphConfig.HasSectors)
+            return 0f;
+
+        EngineTelegraphSector currentSector = shipStatuses.CurrentEngineTelegraphSector;
+        EngineTelegraphSectorData currentSectorData = shipStatuses.GetCurrentEngineTelegraphSectorData();
+
+        if (currentSectorData == null || currentSector == EngineTelegraphSector.Stop)
+            return 0f;
+
+        int currentSectorIndex = shipStatuses.GetEngineTelegraphSectorIndex(currentSector);
+        EngineTelegraphSectorData previousSectorData = engineTelegraphConfig.GetSectorDataByIndex(currentSectorIndex - 1);
+        float reducer01 = shipStatuses.EngineTelegraphReducerPercent / 100f;
+        float fromSpeed = previousSectorData != null
+            ? previousSectorData.speedKnots
+            : currentSectorData.speedKnots;
+
+        return Mathf.Lerp(fromSpeed, currentSectorData.speedKnots, reducer01);
     }
 
     private void UpdateCurrentRotationSpeed()
@@ -186,6 +181,5 @@ public class ShipPropellerVisualController : MonoBehaviour
         maxRotationSpeedDegreesPerSecond = Mathf.Max(0f, maxRotationSpeedDegreesPerSecond);
         minMovingRotationSpeedDegreesPerSecond = Mathf.Max(0f, minMovingRotationSpeedDegreesPerSecond);
         rotationSmoothSpeed = Mathf.Max(0f, rotationSmoothSpeed);
-        idleRotationSpeedDegreesPerSecond = Mathf.Max(0f, idleRotationSpeedDegreesPerSecond);
     }
 }
