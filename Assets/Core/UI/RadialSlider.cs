@@ -28,6 +28,9 @@ public class RadialSlider : MonoBehaviour
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
     [SerializeField] private bool logConfigurationErrors = true;
 
+    [Tooltip("Если включено, контрол остаётся доступным для чтения и программной установки значения, но игнорирует пользовательский ввод.")]
+    [SerializeField] private bool readOnly;
+
     [Tooltip("Скорость поворота стрелки в градусах в секунду. При значении 0 стрелка переходит в позицию мгновенно.")]
     [SerializeField, Min(0f)] private float pointerRotationSpeed = 360f;
 
@@ -50,6 +53,7 @@ public class RadialSlider : MonoBehaviour
     public float Value => currentValue;
     public float MinValue => minValue;
     public float MaxValue => maxValue;
+    public bool ReadOnly => readOnly;
 
     public event Action<float> OnValueChanged;
 
@@ -160,6 +164,16 @@ public class RadialSlider : MonoBehaviour
     public void SetNormalizedValueWithoutNotify(float normalizedValue)
     {
         SetNormalizedValueInternal(normalizedValue, false);
+    }
+
+    public void SetReadOnly(bool value)
+    {
+        readOnly = value;
+
+        if (readOnly)
+        {
+            CompleteDragSession();
+        }
     }
 
     internal void HandleClickAreaPointerDown(PointerEventData eventData)
@@ -316,6 +330,11 @@ public class RadialSlider : MonoBehaviour
 
     private bool IsReadyForInput()
     {
+        if (readOnly)
+        {
+            return false;
+        }
+
         if (!hasInitialized)
         {
             Initialize(false, true);
