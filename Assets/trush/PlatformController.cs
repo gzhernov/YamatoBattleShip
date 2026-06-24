@@ -18,7 +18,7 @@ public class PlatformController : MonoBehaviour
     [Tooltip("Целевой bearing для связанных башен. Значение сохраняется отдельно от курса платформы.")]
     [SerializeField] private float targetBearing;
 
-    [Tooltip("Р¦РµР»РµРІР°СЏ РґРёСЃС‚Р°РЅС†РёСЏ РґРѕ С†РµР»Рё. Р—РЅР°С‡РµРЅРёРµ Р·Р°РґР°С‘С‚СЃСЏ РёР· UI РїР°РЅРµР»Рё РґРёСЃС‚Р°РЅС†РёРё.")]
+    [Tooltip("Целевая дистанция до цели. Значение задаётся из UI панели дистанции.")]
     [SerializeField] private float targetDistanse;
 
     [Tooltip("Список башен, которым делегируется команда Aim.")]
