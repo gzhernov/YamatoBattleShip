@@ -27,7 +27,7 @@ public class PlatformController : MonoBehaviour
     [Tooltip("Автоматически добавлять найденные дочерние TurretWithCannons в список без дубликатов.")]
     [SerializeField] private bool autoFindTurrets = true;
 
-    [SerializeField] private float targetCourse;
+    [SerializeField] private float desiredCourse;
     [SerializeField] private bool hasCourseCommand;
 
     private void OnValidate()
@@ -36,7 +36,7 @@ public class PlatformController : MonoBehaviour
         toleranceDegrees = Mathf.Max(0.01f, toleranceDegrees);
         targetBearing = NormalizeCourse(targetBearing);
         targetDistanse = Mathf.Max(0f, targetDistanse);
-        targetCourse = NormalizeCourse(targetCourse);
+        desiredCourse = NormalizeCourse(desiredCourse);
 
         if (autoFindTurrets)
         {
@@ -57,7 +57,7 @@ public class PlatformController : MonoBehaviour
             return;
         }
 
-        Quaternion targetRotation = Quaternion.Euler(0f, targetCourse, 0f);
+        Quaternion targetRotation = Quaternion.Euler(0f, desiredCourse, 0f);
         platformTransform.rotation = Quaternion.RotateTowards(
             platformTransform.rotation,
             targetRotation,
@@ -71,7 +71,7 @@ public class PlatformController : MonoBehaviour
 
     public void SetCourse(float course)
     {
-        targetCourse = NormalizeCourse(course);
+        desiredCourse = NormalizeCourse(course);
         hasCourseCommand = true;
     }
 
@@ -102,7 +102,7 @@ public class PlatformController : MonoBehaviour
             return false;
         }
 
-        float angleDelta = Mathf.Abs(Mathf.DeltaAngle(GetCurrentCourse(), targetCourse));
+        float angleDelta = Mathf.Abs(Mathf.DeltaAngle(GetCurrentCourse(), desiredCourse));
         return angleDelta <= toleranceDegrees;
     }
 
@@ -116,9 +116,9 @@ public class PlatformController : MonoBehaviour
         return NormalizeCourse(platformTransform.rotation.eulerAngles.y);
     }
 
-    public float GetTargetCourse()
+    public float GetDesiredCourse()
     {
-        return targetCourse;
+        return desiredCourse;
     }
 
     public float GetTargetBearing()
