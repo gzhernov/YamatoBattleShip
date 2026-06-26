@@ -1,9 +1,9 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public class DistancePanelView : MonoBehaviour
+public class DistanceSubPanelView : MonoBehaviour
 {
     [Header("Ссылки")]
     [Tooltip("Слайдер дистанции, из которого считывается текущее значение.")]
@@ -12,8 +12,8 @@ public class DistancePanelView : MonoBehaviour
     [Tooltip("Текстовое поле, показывающее текущее значение дистанции.")]
     [SerializeField] private TMP_Text distanceValueText;
 
-    [Tooltip("Контроллер платформы, в который записывается целевая дистанция.")]
-    [SerializeField] private PlatformController platformController;
+    [Tooltip("Подсистема главной цели, в которую записывается целевая дистанция.")]
+    [SerializeField] private MainTargetSubSystem mainTargetSubSystem;
 
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
@@ -80,16 +80,16 @@ public class DistancePanelView : MonoBehaviour
         }
         else
         {
-            LogConfigurationError("DistancePanelView: не назначена ссылка на distanceValue.");
+            LogConfigurationError("DistancePanelView: не назначена ссылка на distanceValueText.");
         }
 
-        if (platformController != null)
+        if (mainTargetSubSystem != null)
         {
-            platformController.SetTargetDistanse(normalizedDistance);
+            mainTargetSubSystem.SetTargetDistanse(normalizedDistance);
         }
         else
         {
-            LogConfigurationError("DistancePanelView: не назначена ссылка на PlatformController.");
+            LogConfigurationError("DistancePanelView: не назначена ссылка на MainTargetSubSystem.");
         }
     }
 
@@ -102,12 +102,12 @@ public class DistancePanelView : MonoBehaviour
 
         if (distanceValueText == null)
         {
-            LogConfigurationError("DistancePanelView: не назначена ссылка на distanceValue.");
+            LogConfigurationError("DistancePanelView: не назначена ссылка на distanceValueText.");
         }
 
-        if (platformController == null)
+        if (mainTargetSubSystem == null)
         {
-            LogConfigurationError("DistancePanelView: не назначена ссылка на PlatformController.");
+            LogConfigurationError("DistancePanelView: не назначена ссылка на MainTargetSubSystem.");
         }
     }
 

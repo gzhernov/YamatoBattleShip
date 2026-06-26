@@ -1,5 +1,5 @@
+﻿using System.Globalization;
 using TMPro;
-using System.Globalization;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -15,8 +15,11 @@ public class BearingPanelView : MonoBehaviour
     [Tooltip("Текстовое поле с текущим target bearing.")]
     [SerializeField] private TMP_Text targetBearingText;
 
-    [Tooltip("Контроллер платформы, в котором хранится текущий курс и target bearing.")]
+    [Tooltip("Контроллер платформы, из которого читается текущий курс.")]
     [SerializeField] private PlatformController platformController;
+
+    [Tooltip("Подсистема главной цели, в которой хранится target bearing.")]
+    [SerializeField] private MainTargetSubSystem mainTargetSubSystem;
 
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
@@ -51,13 +54,13 @@ public class BearingPanelView : MonoBehaviour
 
     private void Update()
     {
-        if (platformController == null || isSynchronizing)
+        if (platformController == null || mainTargetSubSystem == null || isSynchronizing)
         {
             return;
         }
 
         float currentCourse = platformController.GetCurrentCourse();
-        float currentTargetBearing = platformController.GetTargetBearing();
+        float currentTargetBearing = mainTargetSubSystem.GetTargetBearing();
 
         if (Mathf.Abs(Mathf.DeltaAngle(lastObservedCourse, currentCourse)) <= 0.001f
             && Mathf.Abs(Mathf.DeltaAngle(lastObservedTargetBearing, currentTargetBearing)) <= 0.001f)
@@ -70,13 +73,13 @@ public class BearingPanelView : MonoBehaviour
 
     public void RefreshFromPlatformState()
     {
-        if (platformController == null)
+        if (platformController == null || mainTargetSubSystem == null)
         {
-            LogConfigurationError("BearingPanelView: не назначена ссылка на PlatformController.");
+            LogConfigurationError("BearingPanelView: не назначены обязательные ссылки на PlatformController и MainTargetSubSystem.");
             return;
         }
 
-        ApplyAbsoluteBearing(platformController.GetTargetBearing(), false);
+        ApplyAbsoluteBearing(mainTargetSubSystem.GetTargetBearing(), false);
     }
 
     private void Subscribe()
@@ -159,13 +162,13 @@ public class BearingPanelView : MonoBehaviour
 
         if (updateController)
         {
-            if (platformController == null)
+            if (mainTargetSubSystem == null)
             {
-                LogConfigurationError("BearingPanelView: не назначена ссылка на PlatformController.");
+                LogConfigurationError("BearingPanelView: не назначена ссылка на MainTargetSubSystem.");
             }
             else
             {
-                platformController.SetTargetBearing(normalizedBearing);
+                mainTargetSubSystem.SetTargetBearing(normalizedBearing);
             }
         }
 
@@ -253,7 +256,7 @@ public class BearingPanelView : MonoBehaviour
     {
         if (targetBearingGauge == null)
         {
-            LogConfigurationError("BearingPanelView: не назначена ссылка на TargetPanel.");
+            LogConfigurationError("BearingPanelView: не назначена ссылка на TargetBearingGauge.");
         }
 
         if (portStarboardBearingGauge == null)
@@ -269,6 +272,11 @@ public class BearingPanelView : MonoBehaviour
         if (platformController == null)
         {
             LogConfigurationError("BearingPanelView: не назначена ссылка на PlatformController.");
+        }
+
+        if (mainTargetSubSystem == null)
+        {
+            LogConfigurationError("BearingPanelView: не назначена ссылка на MainTargetSubSystem.");
         }
     }
 

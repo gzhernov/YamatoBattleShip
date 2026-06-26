@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -15,11 +15,8 @@ public class PlatformController : MonoBehaviour
     [SerializeField] private float toleranceDegrees = 0.5f;
 
     [Header("Наведение")]
-    [Tooltip("Целевой bearing для связанных башен. Значение сохраняется отдельно от курса платформы.")]
-    [SerializeField] private float targetBearing;
-
-    [Tooltip("Целевая дистанция до цели. Значение задаётся из UI панели дистанции.")]
-    [SerializeField] private float targetDistanse;
+    [Tooltip("Подсистема, в которой хранится состояние главной цели.")]
+    [SerializeField] private MainTargetSubSystem mainTargetSubSystem;
 
     [Tooltip("Список башен, которым делегируется команда Aim.")]
     [SerializeField] private List<TurretWithCannons> turrets = new List<TurretWithCannons>();
@@ -34,14 +31,18 @@ public class PlatformController : MonoBehaviour
     {
         rotationSpeedDegreesPerSecond = Mathf.Max(0f, rotationSpeedDegreesPerSecond);
         toleranceDegrees = Mathf.Max(0.01f, toleranceDegrees);
-        targetBearing = NormalizeCourse(targetBearing);
-        targetDistanse = Mathf.Max(0f, targetDistanse);
         desiredCourse = NormalizeCourse(desiredCourse);
+        TryAssignMainTargetSubSystem();
 
         if (autoFindTurrets)
         {
             FindTurretsInChildren();
         }
+    }
+
+    private void Awake()
+    {
+        TryAssignMainTargetSubSystem();
     }
 
     private void Update()
@@ -77,12 +78,24 @@ public class PlatformController : MonoBehaviour
 
     public void SetTargetBearing(float bearing)
     {
-        targetBearing = NormalizeCourse(bearing);
+        if (mainTargetSubSystem == null)
+        {
+            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            return;
+        }
+
+        mainTargetSubSystem.SetTargetBearing(NormalizeCourse(bearing));
     }
 
     public void SetTargetDistanse(float distance)
     {
-        targetDistanse = Mathf.Max(0f, distance);
+        if (mainTargetSubSystem == null)
+        {
+            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            return;
+        }
+
+        mainTargetSubSystem.SetTargetDistanse(Mathf.Max(0f, distance));
     }
 
     public void ClearCourseCommand()
@@ -123,12 +136,24 @@ public class PlatformController : MonoBehaviour
 
     public float GetTargetBearing()
     {
-        return targetBearing;
+        if (mainTargetSubSystem == null)
+        {
+            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            return 0f;
+        }
+
+        return mainTargetSubSystem.GetTargetBearing();
     }
 
     public float GetTargetDistanse()
     {
-        return targetDistanse;
+        if (mainTargetSubSystem == null)
+        {
+            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            return 0f;
+        }
+
+        return mainTargetSubSystem.GetTargetDistanse();
     }
 
     public void Aim(float bearing, float elevation)
@@ -192,5 +217,13 @@ public class PlatformController : MonoBehaviour
     private static float NormalizeCourse(float course)
     {
         return Mathf.Repeat(course, 360f);
+    }
+
+    private void TryAssignMainTargetSubSystem()
+    {
+        if (mainTargetSubSystem == null)
+        {
+            mainTargetSubSystem = GetComponent<MainTargetSubSystem>();
+        }
     }
 }
