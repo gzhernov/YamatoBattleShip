@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -9,7 +10,7 @@ public class TargetPanelView : MonoBehaviour
     [SerializeField] private PlatformController platformController;
 
     [Tooltip("Подсистема главной цели, из которой читаются bearing и дистанция.")]
-    [SerializeField] private MainTargetSubSystem mainTargetSubSystem;
+    [SerializeField] private MainGunTargetSubSystem mainGunTargetSubSystem;
 
     [Tooltip("Кнопка, по нажатию на которую отправляется команда наведения.")]
     [SerializeField] private Button aimButton;
@@ -48,8 +49,8 @@ public class TargetPanelView : MonoBehaviour
             return;
         }
 
-        float bearing = mainTargetSubSystem.GetTargetBearing();
-        float elevation = mainTargetSubSystem.GetTargetDistanse();
+        float bearing = mainGunTargetSubSystem.GetTargetBearing();
+        float elevation = mainGunTargetSubSystem.GetTargetDistanse();
         platformController.Aim(bearing, elevation);
     }
 
@@ -85,9 +86,9 @@ public class TargetPanelView : MonoBehaviour
             hasAllReferences = false;
         }
 
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            LogConfigurationError("TargetPanelView: не назначена ссылка на MainTargetSubSystem.");
+            LogConfigurationError("TargetPanelView: не назначена ссылка на MainGunTargetSubSystem.");
             hasAllReferences = false;
         }
 

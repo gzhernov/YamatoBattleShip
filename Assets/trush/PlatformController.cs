@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 public class PlatformController : MonoBehaviour
@@ -16,7 +17,7 @@ public class PlatformController : MonoBehaviour
 
     [Header("Наведение")]
     [Tooltip("Подсистема, в которой хранится состояние главной цели.")]
-    [SerializeField] private MainTargetSubSystem mainTargetSubSystem;
+    [SerializeField] private MainGunTargetSubSystem mainGunTargetSubSystem;
 
     [Tooltip("Список башен, которым делегируется команда Aim.")]
     [SerializeField] private List<TurretWithCannons> turrets = new List<TurretWithCannons>();
@@ -32,7 +33,7 @@ public class PlatformController : MonoBehaviour
         rotationSpeedDegreesPerSecond = Mathf.Max(0f, rotationSpeedDegreesPerSecond);
         toleranceDegrees = Mathf.Max(0.01f, toleranceDegrees);
         desiredCourse = NormalizeCourse(desiredCourse);
-        TryAssignMainTargetSubSystem();
+        TryAssignMainGunTargetSubSystem();
 
         if (autoFindTurrets)
         {
@@ -42,7 +43,7 @@ public class PlatformController : MonoBehaviour
 
     private void Awake()
     {
-        TryAssignMainTargetSubSystem();
+        TryAssignMainGunTargetSubSystem();
     }
 
     private void Update()
@@ -78,24 +79,24 @@ public class PlatformController : MonoBehaviour
 
     public void SetTargetBearing(float bearing)
     {
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            Debug.LogError("PlatformController: не назначена ссылка на MainGunTargetSubSystem.", this);
             return;
         }
 
-        mainTargetSubSystem.SetTargetBearing(NormalizeCourse(bearing));
+        mainGunTargetSubSystem.SetTargetBearing(NormalizeCourse(bearing));
     }
 
     public void SetTargetDistanse(float distance)
     {
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            Debug.LogError("PlatformController: не назначена ссылка на MainGunTargetSubSystem.", this);
             return;
         }
 
-        mainTargetSubSystem.SetTargetDistanse(Mathf.Max(0f, distance));
+        mainGunTargetSubSystem.SetTargetDistanse(Mathf.Max(0f, distance));
     }
 
     public void ClearCourseCommand()
@@ -136,24 +137,24 @@ public class PlatformController : MonoBehaviour
 
     public float GetTargetBearing()
     {
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            Debug.LogError("PlatformController: не назначена ссылка на MainGunTargetSubSystem.", this);
             return 0f;
         }
 
-        return mainTargetSubSystem.GetTargetBearing();
+        return mainGunTargetSubSystem.GetTargetBearing();
     }
 
     public float GetTargetDistanse()
     {
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            Debug.LogError("PlatformController: не назначена ссылка на MainTargetSubSystem.", this);
+            Debug.LogError("PlatformController: не назначена ссылка на MainGunTargetSubSystem.", this);
             return 0f;
         }
 
-        return mainTargetSubSystem.GetTargetDistanse();
+        return mainGunTargetSubSystem.GetTargetDistanse();
     }
 
     public void Aim(float bearing, float elevation)
@@ -219,11 +220,11 @@ public class PlatformController : MonoBehaviour
         return Mathf.Repeat(course, 360f);
     }
 
-    private void TryAssignMainTargetSubSystem()
+    private void TryAssignMainGunTargetSubSystem()
     {
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            mainTargetSubSystem = GetComponent<MainTargetSubSystem>();
+            mainGunTargetSubSystem = GetComponent<MainGunTargetSubSystem>();
         }
     }
 }

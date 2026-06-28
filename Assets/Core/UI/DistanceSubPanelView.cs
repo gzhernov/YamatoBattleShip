@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -13,7 +14,7 @@ public class DistanceSubPanelView : MonoBehaviour
     [SerializeField] private TMP_Text distanceValueText;
 
     [Tooltip("Подсистема главной цели, в которую записывается целевая дистанция.")]
-    [SerializeField] private MainTargetSubSystem mainTargetSubSystem;
+    [SerializeField] private MainGunTargetSubSystem mainGunTargetSubSystem;
 
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
@@ -83,13 +84,13 @@ public class DistanceSubPanelView : MonoBehaviour
             LogConfigurationError("DistancePanelView: не назначена ссылка на distanceValueText.");
         }
 
-        if (mainTargetSubSystem != null)
+        if (mainGunTargetSubSystem != null)
         {
-            mainTargetSubSystem.SetTargetDistanse(normalizedDistance);
+            mainGunTargetSubSystem.SetTargetDistanse(normalizedDistance);
         }
         else
         {
-            LogConfigurationError("DistancePanelView: не назначена ссылка на MainTargetSubSystem.");
+            LogConfigurationError("DistancePanelView: не назначена ссылка на MainGunTargetSubSystem.");
         }
     }
 
@@ -105,9 +106,9 @@ public class DistanceSubPanelView : MonoBehaviour
             LogConfigurationError("DistancePanelView: не назначена ссылка на distanceValueText.");
         }
 
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            LogConfigurationError("DistancePanelView: не назначена ссылка на MainTargetSubSystem.");
+            LogConfigurationError("DistancePanelView: не назначена ссылка на MainGunTargetSubSystem.");
         }
     }
 

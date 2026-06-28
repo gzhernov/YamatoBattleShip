@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 public class BearingPanelView : MonoBehaviour
@@ -19,7 +20,7 @@ public class BearingPanelView : MonoBehaviour
     [SerializeField] private PlatformController platformController;
 
     [Tooltip("Подсистема главной цели, в которой хранится target bearing.")]
-    [SerializeField] private MainTargetSubSystem mainTargetSubSystem;
+    [SerializeField] private MainGunTargetSubSystem mainGunTargetSubSystem;
 
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
@@ -54,13 +55,13 @@ public class BearingPanelView : MonoBehaviour
 
     private void Update()
     {
-        if (platformController == null || mainTargetSubSystem == null || isSynchronizing)
+        if (platformController == null || mainGunTargetSubSystem == null || isSynchronizing)
         {
             return;
         }
 
         float currentCourse = platformController.GetCurrentCourse();
-        float currentTargetBearing = mainTargetSubSystem.GetTargetBearing();
+        float currentTargetBearing = mainGunTargetSubSystem.GetTargetBearing();
 
         if (Mathf.Abs(Mathf.DeltaAngle(lastObservedCourse, currentCourse)) <= 0.001f
             && Mathf.Abs(Mathf.DeltaAngle(lastObservedTargetBearing, currentTargetBearing)) <= 0.001f)
@@ -73,13 +74,13 @@ public class BearingPanelView : MonoBehaviour
 
     public void RefreshFromPlatformState()
     {
-        if (platformController == null || mainTargetSubSystem == null)
+        if (platformController == null || mainGunTargetSubSystem == null)
         {
-            LogConfigurationError("BearingPanelView: не назначены обязательные ссылки на PlatformController и MainTargetSubSystem.");
+            LogConfigurationError("BearingPanelView: не назначены обязательные ссылки на PlatformController и MainGunTargetSubSystem.");
             return;
         }
 
-        ApplyAbsoluteBearing(mainTargetSubSystem.GetTargetBearing(), false);
+        ApplyAbsoluteBearing(mainGunTargetSubSystem.GetTargetBearing(), false);
     }
 
     private void Subscribe()
@@ -162,13 +163,13 @@ public class BearingPanelView : MonoBehaviour
 
         if (updateController)
         {
-            if (mainTargetSubSystem == null)
+            if (mainGunTargetSubSystem == null)
             {
-                LogConfigurationError("BearingPanelView: не назначена ссылка на MainTargetSubSystem.");
+                LogConfigurationError("BearingPanelView: не назначена ссылка на MainGunTargetSubSystem.");
             }
             else
             {
-                mainTargetSubSystem.SetTargetBearing(normalizedBearing);
+                mainGunTargetSubSystem.SetTargetBearing(normalizedBearing);
             }
         }
 
@@ -274,9 +275,9 @@ public class BearingPanelView : MonoBehaviour
             LogConfigurationError("BearingPanelView: не назначена ссылка на PlatformController.");
         }
 
-        if (mainTargetSubSystem == null)
+        if (mainGunTargetSubSystem == null)
         {
-            LogConfigurationError("BearingPanelView: не назначена ссылка на MainTargetSubSystem.");
+            LogConfigurationError("BearingPanelView: не назначена ссылка на MainGunTargetSubSystem.");
         }
     }
 
