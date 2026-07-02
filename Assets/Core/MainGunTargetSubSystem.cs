@@ -3,11 +3,11 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class MainGunTargetSubSystem : MonoBehaviour
 {
-    [Header("РќР°РІРµРґРµРЅРёРµ")]
-    [Tooltip("Р¦РµР»РµРІРѕР№ bearing РґР»СЏ РіР»Р°РІРЅРѕР№ С†РµР»Рё РІ РіСЂР°РґСѓСЃР°С… 0..360.")]
+    [Header("Наведение")]
+    [Tooltip("Целевой bearing для главной цели в градусах 0..360.")]
     [SerializeField] private float targetBearing;
 
-    [Tooltip("Р¦РµР»РµРІР°СЏ РґРёСЃС‚Р°РЅС†РёСЏ РґРѕ РіР»Р°РІРЅРѕР№ С†РµР»Рё.")]
+    [Tooltip("Целевая дистанция до главной цели.")]
     [SerializeField] private float targetDistanse;
 
     private void OnValidate()
