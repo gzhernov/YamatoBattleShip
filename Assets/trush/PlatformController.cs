@@ -77,28 +77,6 @@ public class PlatformController : MonoBehaviour
         hasCourseCommand = true;
     }
 
-    public void SetTargetBearing(float bearing)
-    {
-        if (mainGunTargetSubSystem == null)
-        {
-            Debug.LogError("PlatformController: не назначена ссылка на MainGunTargetSubSystem.", this);
-            return;
-        }
-
-        mainGunTargetSubSystem.SetTargetBearing(NormalizeCourse(bearing));
-    }
-
-    public void SetTargetDistanse(float distance)
-    {
-        if (mainGunTargetSubSystem == null)
-        {
-            Debug.LogError("PlatformController: не назначена ссылка на MainGunTargetSubSystem.", this);
-            return;
-        }
-
-        mainGunTargetSubSystem.SetTargetDistanse(Mathf.Max(0f, distance));
-    }
-
     public void ClearCourseCommand()
     {
         hasCourseCommand = false;
