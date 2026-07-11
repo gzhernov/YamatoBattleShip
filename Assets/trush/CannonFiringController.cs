@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
+[RequireComponent(typeof(Cannon))]
 public class CannonFiringController : MonoBehaviour
 {
     [Header("Links")]
