@@ -168,6 +168,47 @@ public class PlatformController : MonoBehaviour
         }
     }
 
+    public bool TryStartSalvo()
+    {
+        if (autoFindTurrets)
+        {
+            FindTurretsInChildren();
+        }
+
+        if (turrets == null || turrets.Count == 0)
+        {
+            Debug.LogWarning("PlatformController: список TurretWithCannons пуст, делегировать команду залпа некому.", this);
+            return false;
+        }
+
+        bool hasValidTurret = false;
+        bool anySalvoStarted = false;
+
+        for (int i = 0; i < turrets.Count; i++)
+        {
+            TurretWithCannons turret = turrets[i];
+            if (turret == null)
+            {
+                continue;
+            }
+
+            hasValidTurret = true;
+
+            if (turret.TryStartSalvo())
+            {
+                anySalvoStarted = true;
+            }
+        }
+
+        if (!hasValidTurret)
+        {
+            Debug.LogWarning("PlatformController: в списке TurretWithCannons нет валидных ссылок для делегирования залпа.", this);
+            return false;
+        }
+
+        return anySalvoStarted;
+    }
+
     private void FindTurretsInChildren()
     {
         TurretWithCannons[] foundTurrets = GetComponentsInChildren<TurretWithCannons>(true);
