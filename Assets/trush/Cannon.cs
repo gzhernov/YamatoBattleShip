@@ -20,9 +20,13 @@ public class Cannon : MonoBehaviour
     [Header("Cannon Parameters")]
     [SerializeField] private float damage = 10f;
     [SerializeField] private float cannonSpeed = 30f;
+    
+    [Header("Cannon Durations")]
     [SerializeField] private float reloadTime = 1f;
-    [SerializeField] private float maxAngle = 45f;
     [SerializeField] private float shotDuration = 5f;
+    
+    [Header(" ")]
+    [SerializeField] private float maxAngle = 45f;
     [SerializeField] private float loadingAngle = 0f;
     [SerializeField] private float microDelayMin = 0f;
     [SerializeField] private float microDelayMax = 0.15f;
@@ -43,12 +47,12 @@ public class Cannon : MonoBehaviour
     public UnityEvent<float> OnAngleChanged;
 
     public event Action<CannonCycleState> OnStateChanged;
-    public event Action OnAimStarted;
+    // public event Action OnAimStarted;
     public event Action OnAimCompleted;
-    public event Action OnFireStarted;
-    public event Action OnShotPerformed;
-    public event Action OnLoadingStarted;
-    public event Action OnReadyStarted;
+    // public event Action OnFireStarted;
+    // public event Action OnShotPerformed;
+    // public event Action OnLoadingStarted;
+    // public event Action OnReadyStarted;
     public event Action OnCycleCompleted;
 
     public string CannonId => cannonId;
@@ -83,7 +87,7 @@ public class Cannon : MonoBehaviour
             if (cycleState == CannonCycleState.Aiming)
             {
                 SetCycleState(CannonCycleState.Ready);
-                OnAimCompleted?.Invoke();
+                // OnAimCompleted?.Invoke();
             }
 
             return;
@@ -104,7 +108,7 @@ public class Cannon : MonoBehaviour
             if (cycleState == CannonCycleState.Aiming)
             {
                 SetCycleState(CannonCycleState.Ready);
-                OnAimCompleted?.Invoke();
+                // OnAimCompleted?.Invoke();
             }
         }
     }
@@ -122,21 +126,39 @@ public class Cannon : MonoBehaviour
             stateTimer = 0f;
         }
 
+        // switch (cycleState)
+        // {
+        //     case CannonCycleState.Firing:
+        //         BeginLoadingPhase();
+        //         break;
+        //     case CannonCycleState.Loading:
+        //         CompleteLoadingPhase();
+        //         break;
+        // }
+        
         switch (cycleState)
         {
             case CannonCycleState.Firing:
-                BeginLoadingPhase();
+                SetCycleState(CannonCycleState.Loading);
                 break;
             case CannonCycleState.Loading:
-                CompleteLoadingPhase();
+                SetCycleState(CannonCycleState.Ready);
                 break;
         }
+        
+        
+        
+        
+        
+        
+        
+        
     }
 
     private void BeginLoadingPhase()
     {
         SetCycleState(CannonCycleState.Loading);
-        OnLoadingStarted?.Invoke();
+        // OnLoadingStarted?.Invoke();
         OnReloadStart?.Invoke();
 
         desiredAngle = Mathf.Clamp(loadingAngle, -maxAngle, maxAngle);
@@ -149,8 +171,8 @@ public class Cannon : MonoBehaviour
     {
         SetCycleState(CannonCycleState.Ready);
         OnReloadEnd?.Invoke();
-        OnReadyStarted?.Invoke();
-        OnCycleCompleted?.Invoke();
+        // OnReadyStarted?.Invoke();
+        // OnCycleCompleted?.Invoke();
         hasAimCommand = false;
     }
 
@@ -186,9 +208,9 @@ public class Cannon : MonoBehaviour
         stateTimer = shotDuration + GetRandomMicroDelay();
 
         SetCycleState(CannonCycleState.Firing);
-        OnFireStarted?.Invoke();
+        // OnFireStarted?.Invoke();
         OnShoot?.Invoke();
-        OnShotPerformed?.Invoke();
+        // OnShotPerformed?.Invoke();
 
         Debug.Log($"<color=red>Cannon {cannonId} fired! Damage: {damage}</color>");
         return true;
@@ -212,7 +234,7 @@ public class Cannon : MonoBehaviour
         if (cycleState == CannonCycleState.Ready && !IsAngleReached())
         {
             SetCycleState(CannonCycleState.Aiming);
-            OnAimStarted?.Invoke();
+            // OnAimStarted?.Invoke();
         }
     }
 

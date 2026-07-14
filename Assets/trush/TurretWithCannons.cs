@@ -79,10 +79,10 @@ public class TurretWithCannons : MonoBehaviour
         if (foundCannons.Length == 0)
             return;
 
-        UnsubscribeFromCannons();
+        // UnsubscribeFromCannons();
         cannons.Clear();
         cannons.AddRange(foundCannons);
-        SubscribeToCannons();
+        // SubscribeToCannons();
 
         Debug.Log($"Found {cannons.Count} cannons in children");
     }
@@ -129,7 +129,7 @@ public class TurretWithCannons : MonoBehaviour
         {
             if (cannon == null)
                 continue;
-
+    
             cannon.OnCycleCompleted -= HandleCannonCycleCompleted;
             cannon.OnAimCompleted -= HandleCannonAimCompleted;
             cannon.OnCycleCompleted += HandleCannonCycleCompleted;
@@ -143,7 +143,7 @@ public class TurretWithCannons : MonoBehaviour
         {
             if (cannon == null)
                 continue;
-
+    
             cannon.OnCycleCompleted -= HandleCannonCycleCompleted;
             cannon.OnAimCompleted -= HandleCannonAimCompleted;
         }
@@ -342,13 +342,13 @@ public class TurretWithCannons : MonoBehaviour
     {
         if (cannon == null || cannons.Contains(cannon))
             return;
-
+    
         cannons.Add(cannon);
         cannon.OnCycleCompleted -= HandleCannonCycleCompleted;
         cannon.OnAimCompleted -= HandleCannonAimCompleted;
         cannon.OnCycleCompleted += HandleCannonCycleCompleted;
         cannon.OnAimCompleted += HandleCannonAimCompleted;
-
+    
         if (turretData != null)
         {
             InitializeCannonFromData(cannon);
@@ -362,7 +362,7 @@ public class TurretWithCannons : MonoBehaviour
             cannon.OnCycleCompleted -= HandleCannonCycleCompleted;
             cannon.OnAimCompleted -= HandleCannonAimCompleted;
         }
-
+    
         cannons.Remove(cannon);
     }
 

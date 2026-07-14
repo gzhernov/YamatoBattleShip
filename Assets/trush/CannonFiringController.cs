@@ -28,8 +28,8 @@ public class CannonFiringController : MonoBehaviour
             return;
         }
 
-        cannon.OnFireStarted -= HandleFireStarted;
-        cannon.OnFireStarted += HandleFireStarted;
+        // cannon.OnFireStarted -= HandleFireStarted;
+        // cannon.OnFireStarted += HandleFireStarted;
     }
 
     private void OnDisable()
@@ -37,7 +37,7 @@ public class CannonFiringController : MonoBehaviour
         if (cannon == null)
             return;
 
-        cannon.OnFireStarted -= HandleFireStarted;
+        // cannon.OnFireStarted -= HandleFireStarted;
     }
 
     private void HandleFireStarted()
