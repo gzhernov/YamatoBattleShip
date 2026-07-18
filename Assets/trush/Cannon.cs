@@ -1,12 +1,16 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public enum CannonCycleState
 {
     Ready,
     Aiming,
+    PrepareFiring,
     Firing,
+    PrepareLoading,
     Loading
 }
 
@@ -20,10 +24,24 @@ public class Cannon : MonoBehaviour
     [Header("Cannon Parameters")]
     [SerializeField] private float damage = 10f;
     [SerializeField] private float cannonSpeed = 30f;
+
+    [Header("Cannon Durations")] 
+    [SerializeField] private float prepareFiringDuration = 0f;
+    [SerializeField] private float firingDuration = 5f;
+    [SerializeField] private float prepareLoadingDuration = 5f;
+    [SerializeField] private float reloadDuration = 30f;
     
-    [Header("Cannon Durations")]
-    [SerializeField] private float reloadTime = 1f;
-    [SerializeField] private float shotDuration = 5f;
+    
+    public Dictionary<CannonCycleState, float> FiringDurations =
+        new Dictionary<CannonCycleState, float>
+        {
+            [CannonCycleState.PrepareFiring] = 0,
+            [CannonCycleState.Firing] = 5f,
+            [CannonCycleState.PrepareLoading] = 5f,
+            [CannonCycleState.Loading] = 5
+        };
+    
+    
     
     [Header(" ")]
     [SerializeField] private float maxAngle = 45f;
@@ -40,19 +58,23 @@ public class Cannon : MonoBehaviour
     [SerializeField] private float desiredAngle = 0f;
     [SerializeField] private bool hasAimCommand = false;
 
-    [Header("Events")]
-    public UnityEvent OnShoot;
-    public UnityEvent OnReloadStart;
-    public UnityEvent OnReloadEnd;
-    public UnityEvent<float> OnAngleChanged;
+    // [Header("Events")]
+    // public UnityEvent OnShoot;
+    // public UnityEvent OnReloadStart;
+    // public UnityEvent OnReloadEnd;
+    // public UnityEvent<float> OnAngleChanged;
 
     public event Action<CannonCycleState> OnStateChanged;
     // public event Action OnAimStarted;
     public event Action OnAimCompleted;
-    // public event Action OnFireStarted;
-    // public event Action OnShotPerformed;
-    // public event Action OnLoadingStarted;
-    // public event Action OnReadyStarted;
+    
+    public event Action OnFireStarted;
+    public event Action OnFirePerformed;
+    public event Action OnPreprareLoadingStarted;
+    
+    public event Action OnLoadingStarted;
+    
+    public event Action OnReadyStarted;
     public event Action OnCycleCompleted;
 
     public string CannonId => cannonId;
@@ -61,6 +83,22 @@ public class Cannon : MonoBehaviour
     public float CurrentAngle => currentAngle;
     public Transform FirePoint => firePoint;
     public CannonCycleState CycleState => cycleState;
+
+    private void OnEnable()
+    {
+        OnFireStarted += LogCurrentStatus;
+        OnPreprareLoadingStarted += LogCurrentStatus;
+        OnLoadingStarted += LogCurrentStatus;
+        OnReadyStarted += LogCurrentStatus;
+    }
+
+    private void OnDisable()
+    {
+        OnFireStarted -= LogCurrentStatus;
+        OnPreprareLoadingStarted -= LogCurrentStatus;
+        OnLoadingStarted -= LogCurrentStatus;
+        OnReadyStarted -= LogCurrentStatus;
+    }
 
     private void Update()
     {
@@ -72,7 +110,7 @@ public class Cannon : MonoBehaviour
     {
         damage = data.Damage;
         cannonSpeed = data.CannonSpeed;
-        reloadTime = data.ReloadTime;
+        reloadDuration = data.ReloadTime;
         maxAngle = data.MaxAngle;
     }
 
@@ -87,7 +125,7 @@ public class Cannon : MonoBehaviour
             if (cycleState == CannonCycleState.Aiming)
             {
                 SetCycleState(CannonCycleState.Ready);
-                // OnAimCompleted?.Invoke();
+                OnAimCompleted?.Invoke();
             }
 
             return;
@@ -100,7 +138,7 @@ public class Cannon : MonoBehaviour
         );
 
         cannonPivot.localRotation = Quaternion.Euler(-currentAngle, 0f, 0f);
-        OnAngleChanged?.Invoke(currentAngle);
+        // OnAngleChanged?.Invoke(currentAngle);
 
         if (IsAngleReached())
         {
@@ -108,7 +146,7 @@ public class Cannon : MonoBehaviour
             if (cycleState == CannonCycleState.Aiming)
             {
                 SetCycleState(CannonCycleState.Ready);
-                // OnAimCompleted?.Invoke();
+                OnAimCompleted?.Invoke();
             }
         }
     }
@@ -126,53 +164,57 @@ public class Cannon : MonoBehaviour
             stateTimer = 0f;
         }
 
-        // switch (cycleState)
-        // {
-        //     case CannonCycleState.Firing:
-        //         BeginLoadingPhase();
-        //         break;
-        //     case CannonCycleState.Loading:
-        //         CompleteLoadingPhase();
-        //         break;
-        // }
-        
         switch (cycleState)
         {
+            case CannonCycleState.PrepareFiring:
+                stateTimer =  GetDuration(CannonCycleState.Firing) + GetRandomMicroDelay();
+                SetCycleState(CannonCycleState.Firing);
+                OnFireStarted?.Invoke();
+                
+                break;
             case CannonCycleState.Firing:
+                stateTimer = GetDuration(CannonCycleState.PrepareLoading) + GetRandomMicroDelay();
+                SetCycleState(CannonCycleState.PrepareLoading);
+                OnPreprareLoadingStarted?.Invoke();
+                    
+                break;
+            case CannonCycleState.PrepareLoading:
+                stateTimer = GetDuration(CannonCycleState.Loading) + GetRandomMicroDelay();
                 SetCycleState(CannonCycleState.Loading);
+                OnLoadingStarted?.Invoke();
+                
                 break;
             case CannonCycleState.Loading:
                 SetCycleState(CannonCycleState.Ready);
+                OnReadyStarted?.Invoke();
+                CompleteLoadingPhase();
                 break;
         }
         
-        
-        
-        
-        
-        
-        
-        
     }
 
+    public float GetDuration(CannonCycleState state)
+    {
+        return FiringDurations.TryGetValue(state, out float duration)
+            ? duration
+            : 0f;
+    }
+    
     private void BeginLoadingPhase()
     {
         SetCycleState(CannonCycleState.Loading);
         // OnLoadingStarted?.Invoke();
-        OnReloadStart?.Invoke();
+        // OnReloadStart?.Invoke();
 
-        desiredAngle = Mathf.Clamp(loadingAngle, -maxAngle, maxAngle);
-        hasAimCommand = cannonPivot != null;
+        // desiredAngle = Mathf.Clamp(loadingAngle, -maxAngle, maxAngle);
+        // hasAimCommand = cannonPivot != null;
 
-        stateTimer = reloadTime + GetRandomMicroDelay();
+        stateTimer = reloadDuration + GetRandomMicroDelay();
     }
 
     private void CompleteLoadingPhase()
     {
-        SetCycleState(CannonCycleState.Ready);
-        OnReloadEnd?.Invoke();
-        // OnReadyStarted?.Invoke();
-        // OnCycleCompleted?.Invoke();
+        OnCycleCompleted?.Invoke();
         hasAimCommand = false;
     }
 
@@ -183,6 +225,11 @@ public class Cannon : MonoBehaviour
 
         cycleState = newState;
         OnStateChanged?.Invoke(cycleState);
+    }
+
+    private void LogCurrentStatus()
+    {
+        Debug.Log($"Cannon {cannonId} current status: {cycleState}");
     }
 
     private float GetRandomMicroDelay()
@@ -204,12 +251,12 @@ public class Cannon : MonoBehaviour
     {
         if (!IsReady)
             return false;
-
-        stateTimer = shotDuration + GetRandomMicroDelay();
-
-        SetCycleState(CannonCycleState.Firing);
+        
+        stateTimer =  GetDuration(CannonCycleState.PrepareFiring) + GetRandomMicroDelay();
+        SetCycleState(CannonCycleState.PrepareFiring);
+        
         // OnFireStarted?.Invoke();
-        OnShoot?.Invoke();
+        // OnShoot?.Invoke();
         // OnShotPerformed?.Invoke();
 
         Debug.Log($"<color=red>Cannon {cannonId} fired! Damage: {damage}</color>");
