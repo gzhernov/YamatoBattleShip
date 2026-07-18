@@ -31,9 +31,7 @@ public class Cannon : MonoBehaviour
     [SerializeField] private float prepareLoadingDuration = 5f;
     [SerializeField] private float reloadDuration = 30f;
     
-    
-    public Dictionary<CannonCycleState, float> FiringDurations =
-        new Dictionary<CannonCycleState, float>
+    public Dictionary<CannonCycleState, float> FiringDurations = new Dictionary<CannonCycleState, float>
         {
             [CannonCycleState.PrepareFiring] = 0,
             [CannonCycleState.Firing] = 5f,
@@ -88,6 +86,7 @@ public class Cannon : MonoBehaviour
     {
         OnFireStarted += LogCurrentStatus;
         OnPreprareLoadingStarted += LogCurrentStatus;
+        OnPreprareLoadingStarted += PreLoadingPhase;
         OnLoadingStarted += LogCurrentStatus;
         OnReadyStarted += LogCurrentStatus;
     }
@@ -100,6 +99,18 @@ public class Cannon : MonoBehaviour
         OnReadyStarted -= LogCurrentStatus;
     }
 
+    
+    private void PreLoadingPhase()
+    {
+        // SetCycleState(CannonCycleState.Loading);
+        // OnLoadingStarted?.Invoke();
+        // OnReloadStart?.Invoke();
+
+        desiredAngle = Mathf.Clamp(loadingAngle, -maxAngle, maxAngle);
+        hasAimCommand = cannonPivot != null;
+    }
+    
+    
     private void Update()
     {
         RotateCannonToAngle();
@@ -200,17 +211,7 @@ public class Cannon : MonoBehaviour
             : 0f;
     }
     
-    private void BeginLoadingPhase()
-    {
-        SetCycleState(CannonCycleState.Loading);
-        // OnLoadingStarted?.Invoke();
-        // OnReloadStart?.Invoke();
-
-        // desiredAngle = Mathf.Clamp(loadingAngle, -maxAngle, maxAngle);
-        // hasAimCommand = cannonPivot != null;
-
-        stateTimer = reloadDuration + GetRandomMicroDelay();
-    }
+    
 
     private void CompleteLoadingPhase()
     {
@@ -299,8 +300,8 @@ public class Cannon : MonoBehaviour
 
     public float GetDesiredAngle() => desiredAngle;
 
-    public void ForceReload()
-    {
-        BeginLoadingPhase();
-    }
+    // public void ForceReload()
+    // {
+    //     BeginLoadingPhase();
+    // }
 }

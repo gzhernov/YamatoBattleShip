@@ -373,11 +373,11 @@ public class TurretWithCannons : MonoBehaviour
 
     public List<Cannon> GetCannons() => cannons;
 
-    public void ForceReloadAll()
-    {
-        foreach (var cannon in cannons)
-        {
-            cannon?.ForceReload();
-        }
-    }
+    // public void ForceReloadAll()
+    // {
+    //     foreach (var cannon in cannons)
+    //     {
+    //         cannon?.ForceReload();
+    //     }
+    // }
 }
