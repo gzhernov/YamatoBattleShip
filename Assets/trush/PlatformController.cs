@@ -8,6 +8,7 @@ public class PlatformController : MonoBehaviour
         Idle,
         Aiming,
         AimCooldown,
+        StartingSalvo,
         WaitingTurretsReady
     }
 
@@ -326,6 +327,10 @@ public class PlatformController : MonoBehaviour
                 UpdateAutoSalvoCooldown();
                 break;
 
+            case SalvoFireLoopState.StartingSalvo:
+                UpdateAutoSalvoStartingSalvo();
+                break;
+
             case SalvoFireLoopState.WaitingTurretsReady:
                 UpdateAutoSalvoWaitingTurretsReady();
                 break;
@@ -361,6 +366,11 @@ public class PlatformController : MonoBehaviour
             return;
         }
 
+        salvoFireLoopState = SalvoFireLoopState.StartingSalvo;
+    }
+
+    private void UpdateAutoSalvoStartingSalvo()
+    {
         if (TryStartSalvo())
         {
             salvoFireLoopState = SalvoFireLoopState.WaitingTurretsReady;
