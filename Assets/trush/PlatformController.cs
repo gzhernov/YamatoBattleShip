@@ -1,10 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
-
 [DisallowMultipleComponent]
 public class PlatformController : MonoBehaviour
 {
+    private enum SalvoFireLoopState
+    {
+        Idle,
+        Aiming,
+        AimCooldown,
+        WaitingTurretsReady
+    }
+
     [Header("Поворот платформы")]
     [Tooltip("Объект, который нужно поворачивать вокруг оси Y.")]
     [SerializeField] private Transform platformTransform;
@@ -25,13 +31,38 @@ public class PlatformController : MonoBehaviour
     [Tooltip("Автоматически добавлять найденные дочерние TurretWithCannons в список без дубликатов.")]
     [SerializeField] private bool autoFindTurrets = true;
 
+    [Header("Залповый огонь")]
+    [Tooltip("Включает автоматический цикл: наведение, короткая пауза, залп, ожидание готовности башен.")]
+    [SerializeField] private bool autoSalvoFireEnabled;
+
+    [Tooltip("Пауза после завершения наведения перед началом залпа.")]
+    [SerializeField] private float aimCooldownSeconds = 0.25f;
+
+    [Tooltip("Минимальный расчётный угол возвышения орудий главного калибра.")]
+    [SerializeField] private float minMainGunElevation = -5f;
+
+    [Tooltip("Максимальный расчётный угол возвышения орудий главного калибра.")]
+    [SerializeField] private float maxMainGunElevation = 45f;
+
+    [Tooltip("Текущее состояние автоматического цикла залпового огня.")]
+    [SerializeField] private SalvoFireLoopState salvoFireLoopState = SalvoFireLoopState.Idle;
+
     [SerializeField] private float desiredCourse;
     [SerializeField] private bool hasCourseCommand;
+
+    private float salvoStateTimer;
+    private bool aimCommandIssued;
 
     private void OnValidate()
     {
         rotationSpeedDegreesPerSecond = Mathf.Max(0f, rotationSpeedDegreesPerSecond);
         toleranceDegrees = Mathf.Max(0.01f, toleranceDegrees);
+        aimCooldownSeconds = Mathf.Max(0f, aimCooldownSeconds);
+        if (maxMainGunElevation < minMainGunElevation)
+        {
+            maxMainGunElevation = minMainGunElevation;
+        }
+
         desiredCourse = NormalizeCourse(desiredCourse);
         TryAssignMainGunTargetSubSystem();
 
@@ -47,6 +78,12 @@ public class PlatformController : MonoBehaviour
     }
 
     private void Update()
+    {
+        UpdateCourseCommand();
+        UpdateAutoSalvoFire();
+    }
+
+    private void UpdateCourseCommand()
     {
         if (!hasCourseCommand || platformTransform == null)
         {
@@ -135,6 +172,46 @@ public class PlatformController : MonoBehaviour
         return mainGunTargetSubSystem.GetTargetDistanse();
     }
 
+    public void StartAutoSalvoFire()
+    {
+        // TryAssignMainGunTargetSubSystem();
+
+        if (autoFindTurrets)
+        {
+            FindTurretsInChildren();
+        }
+
+        if (mainGunTargetSubSystem == null)
+        {
+            Debug.LogError("PlatformController: невозможно запустить автоогонь, не назначена ссылка на MainGunTargetSubSystem.", this);
+            return;
+        }
+
+        if (!HasAnyValidTurret())
+        {
+            Debug.LogWarning("PlatformController: невозможно запустить автоогонь, нет валидных башен.", this);
+            return;
+        }
+
+        autoSalvoFireEnabled = true;
+        aimCommandIssued = false;
+        salvoStateTimer = 0f;
+        salvoFireLoopState = SalvoFireLoopState.Aiming;
+    }
+
+    public void StopAutoSalvoFire()
+    {
+        autoSalvoFireEnabled = false;
+        aimCommandIssued = false;
+        salvoStateTimer = 0f;
+        salvoFireLoopState = SalvoFireLoopState.Idle;
+    }
+
+    public bool IsAutoSalvoFireActive()
+    {
+        return autoSalvoFireEnabled;
+    }
+
     public void Aim(float bearing, float elevation)
     {
         if (autoFindTurrets)
@@ -207,6 +284,170 @@ public class PlatformController : MonoBehaviour
         }
 
         return anySalvoStarted;
+    }
+
+    private void UpdateAutoSalvoFire()
+    {
+        if (!autoSalvoFireEnabled)
+        {
+            return;
+        }
+
+        if (mainGunTargetSubSystem == null)
+        {
+            Debug.LogError("PlatformController: автоогонь остановлен, не назначена ссылка на MainGunTargetSubSystem.", this);
+            StopAutoSalvoFire();
+            return;
+        }
+
+        if (autoFindTurrets)
+        {
+            FindTurretsInChildren();
+        }
+
+        if (!HasAnyValidTurret())
+        {
+            Debug.LogWarning("PlatformController: автоогонь остановлен, нет валидных башен.", this);
+            StopAutoSalvoFire();
+            return;
+        }
+
+        switch (salvoFireLoopState)
+        {
+            case SalvoFireLoopState.Idle:
+                salvoFireLoopState = SalvoFireLoopState.Aiming;
+                break;
+
+            case SalvoFireLoopState.Aiming:
+                UpdateAutoSalvoAiming();
+                break;
+
+            case SalvoFireLoopState.AimCooldown:
+                UpdateAutoSalvoCooldown();
+                break;
+
+            case SalvoFireLoopState.WaitingTurretsReady:
+                UpdateAutoSalvoWaitingTurretsReady();
+                break;
+        }
+    }
+
+    private void UpdateAutoSalvoAiming()
+    {
+        if (!aimCommandIssued)
+        {
+            float bearing = mainGunTargetSubSystem.GetTargetBearing();
+            float distanceKilometers = mainGunTargetSubSystem.GetTargetDistanse();
+            float elevation = CalculateTargetElevation(distanceKilometers);
+
+            Aim(bearing, elevation);
+            aimCommandIssued = true;
+        }
+
+        if (!AreAllTurretsAimed())
+        {
+            return;
+        }
+
+        salvoStateTimer = aimCooldownSeconds;
+        salvoFireLoopState = SalvoFireLoopState.AimCooldown;
+    }
+
+    private void UpdateAutoSalvoCooldown()
+    {
+        salvoStateTimer -= Time.deltaTime;
+        if (salvoStateTimer > 0f)
+        {
+            return;
+        }
+
+        if (TryStartSalvo())
+        {
+            salvoFireLoopState = SalvoFireLoopState.WaitingTurretsReady;
+            return;
+        }
+
+        aimCommandIssued = false;
+        salvoFireLoopState = SalvoFireLoopState.Aiming;
+    }
+
+    private void UpdateAutoSalvoWaitingTurretsReady()
+    {
+        if (!AreAllTurretsReady())
+        {
+            return;
+        }
+
+        aimCommandIssued = false;
+        salvoFireLoopState = SalvoFireLoopState.Aiming;
+    }
+
+    private float CalculateTargetElevation(float targetDistanceKilometers)
+    {
+        float elevation = targetDistanceKilometers;
+        return Mathf.Clamp(elevation, minMainGunElevation, maxMainGunElevation);
+    }
+
+    private bool AreAllTurretsAimed()
+    {
+        bool hasValidTurret = false;
+
+        for (int i = 0; i < turrets.Count; i++)
+        {
+            TurretWithCannons turret = turrets[i];
+            if (turret == null)
+            {
+                continue;
+            }
+
+            hasValidTurret = true;
+            if (!turret.IsAimed(toleranceDegrees))
+            {
+                return false;
+            }
+        }
+
+        return hasValidTurret;
+    }
+
+    private bool AreAllTurretsReady()
+    {
+        bool hasValidTurret = false;
+
+        for (int i = 0; i < turrets.Count; i++)
+        {
+            TurretWithCannons turret = turrets[i];
+            if (turret == null)
+            {
+                continue;
+            }
+
+            hasValidTurret = true;
+            if (!turret.IsReady)
+            {
+                return false;
+            }
+        }
+
+        return hasValidTurret;
+    }
+
+    private bool HasAnyValidTurret()
+    {
+        if (turrets == null || turrets.Count == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < turrets.Count; i++)
+        {
+            if (turrets[i] != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void FindTurretsInChildren()
