@@ -11,6 +11,9 @@ public class ArtilleryPanelController : MonoBehaviour
     [Tooltip("Кнопка, по нажатию на которую отправляется команда залпа.")]
     [SerializeField] private Button fireButton;
 
+    [Tooltip("Кнопка, по нажатию на которую включается или выключается автоматический залповый огонь.")]
+    [SerializeField] private Button autoFireButton;
+
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
     [SerializeField] private bool logConfigurationErrors = true;
@@ -48,25 +51,51 @@ public class ArtilleryPanelController : MonoBehaviour
         platformController.TryStartSalvo();
     }
 
+    public void InvokeAutoFire()
+    {
+        if (!HasRequiredReferences())
+        {
+            return;
+        }
+
+        if (platformController.IsAutoSalvoFireActive())
+        {
+            platformController.StopAutoSalvoFire();
+            return;
+        }
+
+        platformController.StartAutoSalvoFire();
+    }
+
     private void Subscribe()
     {
-        if (isSubscribed || fireButton == null)
+        if (isSubscribed || !HasRequiredReferences())
         {
             return;
         }
 
         fireButton.onClick.AddListener(InvokeFire);
+        autoFireButton.onClick.AddListener(InvokeAutoFire);
         isSubscribed = true;
     }
 
     private void Unsubscribe()
     {
-        if (!isSubscribed || fireButton == null)
+        if (!isSubscribed)
         {
             return;
         }
 
-        fireButton.onClick.RemoveListener(InvokeFire);
+        if (fireButton != null)
+        {
+            fireButton.onClick.RemoveListener(InvokeFire);
+        }
+
+        if (autoFireButton != null)
+        {
+            autoFireButton.onClick.RemoveListener(InvokeAutoFire);
+        }
+
         isSubscribed = false;
     }
 
@@ -83,6 +112,12 @@ public class ArtilleryPanelController : MonoBehaviour
         if (fireButton == null)
         {
             LogConfigurationError("ArtilleryPanelController: не назначена ссылка на кнопку Fire.");
+            hasAllReferences = false;
+        }
+
+        if (autoFireButton == null)
+        {
+            LogConfigurationError("ArtilleryPanelController: не назначена ссылка на кнопку автоогня.");
             hasAllReferences = false;
         }
 
