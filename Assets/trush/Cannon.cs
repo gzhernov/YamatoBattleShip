@@ -1,8 +1,5 @@
 using UnityEngine;
-using UnityEngine.Events;
 using System;
-using System.Collections.Generic;
-using UnityEngine.Serialization;
 
 public enum CannonCycleState
 {
@@ -21,33 +18,16 @@ public class Cannon : MonoBehaviour
     [SerializeField] private Transform cannonPivot;
     [SerializeField] private Transform firePoint;
 
-    [Header("Cannon Parameters")]
-    [SerializeField] private float damage = 10f;
-    [SerializeField] private float cannonSpeed = 30f;
-    [SerializeField] private float maxAngle = 45f;
-    [SerializeField] private float loadingAngle = 0f;
-    [SerializeField] private float microDelayMin = 0f;
-    [SerializeField] private float microDelayMax = 0.15f;
-    
-    
-    [Header("Cannon Durations")] 
-    [SerializeField] private float prepareFiringDuration = 0f;
-    [SerializeField] private float firingDuration = 5f;
-    [SerializeField] private float prepareLoadingDuration = 5f;
-    [SerializeField] private float reloadDuration = 30f;
-    
-    public Dictionary<CannonCycleState, float> FiringDurations = new Dictionary<CannonCycleState, float>
-        {
-            [CannonCycleState.PrepareFiring] = 0,
-            [CannonCycleState.Firing] = 5f,
-            [CannonCycleState.PrepareLoading] = 5f,
-            [CannonCycleState.Loading] = 5
-        };
-    
-    
-    
-    
-    
+    private float damage = 10f;
+    private float cannonSpeed = 30f;
+    private float maxAngle = 45f;
+    private float loadingAngle = 0f;
+    private float microDelayMin = 0f;
+    private float microDelayMax = 0.15f;
+    private float prepareFiringDuration = 0f;
+    private float firingDuration = 5f;
+    private float prepareLoadingDuration = 5f;
+    private float reloadDuration = 5f;
 
     [Header("Current State")]
     [SerializeField] private CannonCycleState cycleState = CannonCycleState.Ready;
@@ -119,12 +99,28 @@ public class Cannon : MonoBehaviour
         UpdateStateMachine();
     }
 
-    public void InitializeFromData(TurretData data)
+    public void ApplyTurretSettings(
+        float damage,
+        float cannonSpeed,
+        float maxAngle,
+        float loadingAngle,
+        float microDelayMin,
+        float microDelayMax,
+        float prepareFiringDuration,
+        float firingDuration,
+        float prepareLoadingDuration,
+        float reloadDuration)
     {
-        damage = data.Damage;
-        cannonSpeed = data.CannonSpeed;
-        reloadDuration = data.ReloadTime;
-        maxAngle = data.MaxAngle;
+        this.damage = damage;
+        this.cannonSpeed = cannonSpeed;
+        this.maxAngle = maxAngle;
+        this.loadingAngle = loadingAngle;
+        this.microDelayMin = microDelayMin;
+        this.microDelayMax = microDelayMax;
+        this.prepareFiringDuration = prepareFiringDuration;
+        this.firingDuration = firingDuration;
+        this.prepareLoadingDuration = prepareLoadingDuration;
+        this.reloadDuration = reloadDuration;
     }
 
     private void RotateCannonToAngle()
@@ -208,12 +204,20 @@ public class Cannon : MonoBehaviour
 
     public float GetDuration(CannonCycleState state)
     {
-        return FiringDurations.TryGetValue(state, out float duration)
-            ? duration
-            : 0f;
+        switch (state)
+        {
+            case CannonCycleState.PrepareFiring:
+                return prepareFiringDuration;
+            case CannonCycleState.Firing:
+                return firingDuration;
+            case CannonCycleState.PrepareLoading:
+                return prepareLoadingDuration;
+            case CannonCycleState.Loading:
+                return reloadDuration;
+            default:
+                return 0f;
+        }
     }
-    
-    
 
     private void CompleteLoadingPhase()
     {

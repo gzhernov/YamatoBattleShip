@@ -24,6 +24,28 @@ public class TurretWithCannons : MonoBehaviour
     [SerializeField] private bool autoFindCannons = true;
     [SerializeField] private bool autoInitializeCannons = true;
 
+    [Header("Cannon Parameters")]
+    [SerializeField] private float damage = 10f;
+    [SerializeField] private float cannonSpeed = 30f;
+    [SerializeField] private float maxAngle = 45f;
+    [SerializeField] private float loadingAngle = 0f;
+    [SerializeField] private float microDelayMin = 0f;
+    [SerializeField] private float microDelayMax = 0.15f;
+
+    [Header("Cannon Durations")]
+    [SerializeField] private float prepareFiringDuration = 0f;
+    [SerializeField] private float firingDuration = 5f;
+    [SerializeField] private float prepareLoadingDuration = 5f;
+    [SerializeField] private float reloadDuration = 5f;
+
+    public Dictionary<CannonCycleState, float> FiringDurations = new Dictionary<CannonCycleState, float>
+    {
+        [CannonCycleState.PrepareFiring] = 0f,
+        [CannonCycleState.Firing] = 5f,
+        [CannonCycleState.PrepareLoading] = 5f,
+        [CannonCycleState.Loading] = 5f
+    };
+
     [Header("Cycle State")]
     [SerializeField] private TurretCycleState cycleState = TurretCycleState.Ready;
 
@@ -43,6 +65,7 @@ public class TurretWithCannons : MonoBehaviour
 
     private void Start()
     {
+        SyncFiringDurations();
         InitializeCannons();
         SubscribeToCannons();
     }
@@ -54,13 +77,15 @@ public class TurretWithCannons : MonoBehaviour
 
     private void OnValidate()
     {
+        SyncFiringDurations();
+
         // В редакторе автоматически находим и инициализируем орудия.
         if (autoFindCannons)
         {
             FindAllCannons();
         }
 
-        if (autoInitializeCannons && turretData != null)
+        if (autoInitializeCannons)
         {
             InitializeCannonsFromData();
         }
@@ -91,8 +116,7 @@ public class TurretWithCannons : MonoBehaviour
     {
         if (turretData == null)
         {
-            Debug.LogError("TurretData is not assigned!", this);
-            return;
+            Debug.LogWarning("TurretData is not assigned. Turret rotation speed will not be available.", this);
         }
 
         InitializeCannonsFromData();
@@ -100,6 +124,8 @@ public class TurretWithCannons : MonoBehaviour
 
     private void InitializeCannonsFromData()
     {
+        SyncFiringDurations();
+
         if (cannons == null || cannons.Count == 0)
         {
             Debug.LogWarning("No cannons to initialize. Try enabling autoFindCannons or assign cannons manually.");
@@ -114,13 +140,37 @@ public class TurretWithCannons : MonoBehaviour
             }
         }
 
-        Debug.Log($"Initialized {cannons.Count} cannons with data from {turretData.name}");
+        Debug.Log($"Initialized {cannons.Count} cannons with turret settings");
     }
 
     private void InitializeCannonFromData(Cannon cannon)
     {
-        cannon.InitializeFromData(turretData);
+        cannon.ApplyTurretSettings(
+            damage,
+            cannonSpeed,
+            maxAngle,
+            loadingAngle,
+            microDelayMin,
+            microDelayMax,
+            FiringDurations[CannonCycleState.PrepareFiring],
+            FiringDurations[CannonCycleState.Firing],
+            FiringDurations[CannonCycleState.PrepareLoading],
+            FiringDurations[CannonCycleState.Loading]);
+
         Debug.Log($"Initialized cannon: {cannon.CannonId}");
+    }
+
+    private void SyncFiringDurations()
+    {
+        if (FiringDurations == null)
+        {
+            FiringDurations = new Dictionary<CannonCycleState, float>();
+        }
+
+        FiringDurations[CannonCycleState.PrepareFiring] = prepareFiringDuration;
+        FiringDurations[CannonCycleState.Firing] = firingDuration;
+        FiringDurations[CannonCycleState.PrepareLoading] = prepareLoadingDuration;
+        FiringDurations[CannonCycleState.Loading] = reloadDuration;
     }
 
     private void SubscribeToCannons()
@@ -349,10 +399,7 @@ public class TurretWithCannons : MonoBehaviour
         cannon.OnCycleCompleted += HandleCannonCycleCompleted;
         cannon.OnAimCompleted += HandleCannonAimCompleted;
     
-        if (turretData != null)
-        {
-            InitializeCannonFromData(cannon);
-        }
+        InitializeCannonFromData(cannon);
     }
 
     public void RemoveCannon(Cannon cannon)
