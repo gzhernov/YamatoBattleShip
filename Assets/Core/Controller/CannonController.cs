@@ -12,7 +12,7 @@ public enum CannonCycleState
     Loading
 }
 
-public class Cannon : MonoBehaviour
+public class CannonController : MonoBehaviour
 {
     [Header("Cannon Settings")]
     [SerializeField] private string cannonId = "Cannon";

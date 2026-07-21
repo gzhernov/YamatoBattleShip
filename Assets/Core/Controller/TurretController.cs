@@ -20,7 +20,7 @@ public class TurretWithCannons : MonoBehaviour
     [SerializeField] private Transform turretPivot;
 
     [Header("Cannons")]
-    [SerializeField] private List<Cannon> cannons = new List<Cannon>();
+    [SerializeField] private List<CannonController> cannons = new List<CannonController>();
     [SerializeField] private bool autoFindCannons = true;
     [SerializeField] private bool autoInitializeCannons = true;
 
@@ -90,7 +90,7 @@ public class TurretWithCannons : MonoBehaviour
     private void FindAllCannons()
     {
         // Находим все компоненты Cannon в дочерних объектах.
-        var foundCannons = GetComponentsInChildren<Cannon>();
+        var foundCannons = GetComponentsInChildren<CannonController>();
         if (foundCannons.Length == 0)
             return;
 
@@ -132,9 +132,9 @@ public class TurretWithCannons : MonoBehaviour
         Debug.Log($"Initialized {cannons.Count} cannons with turret settings");
     }
 
-    private void InitializeCannonFromData(Cannon cannon)
+    private void InitializeCannonFromData(CannonController cannonController)
     {
-        cannon.ApplyTurretSettings(
+        cannonController.ApplyTurretSettings(
             damage,
             cannonSpeed,
             maxAngle,
@@ -146,7 +146,7 @@ public class TurretWithCannons : MonoBehaviour
             prepareLoadingDuration,
             reloadDuration);
 
-        Debug.Log($"Initialized cannon: {cannon.CannonId}");
+        Debug.Log($"Initialized cannon: {cannonController.CannonId}");
     }
 
     private void SubscribeToCannons()
@@ -364,29 +364,29 @@ public class TurretWithCannons : MonoBehaviour
         return rotationSource.rotation.eulerAngles.y;
     }
 
-    public void AddCannon(Cannon cannon)
+    public void AddCannon(CannonController cannonController)
     {
-        if (cannon == null || cannons.Contains(cannon))
+        if (cannonController == null || cannons.Contains(cannonController))
             return;
     
-        cannons.Add(cannon);
-        cannon.OnCycleCompleted -= HandleCannonCycleCompleted;
-        cannon.OnAimCompleted -= HandleCannonAimCompleted;
-        cannon.OnCycleCompleted += HandleCannonCycleCompleted;
-        cannon.OnAimCompleted += HandleCannonAimCompleted;
+        cannons.Add(cannonController);
+        cannonController.OnCycleCompleted -= HandleCannonCycleCompleted;
+        cannonController.OnAimCompleted -= HandleCannonAimCompleted;
+        cannonController.OnCycleCompleted += HandleCannonCycleCompleted;
+        cannonController.OnAimCompleted += HandleCannonAimCompleted;
     
-        InitializeCannonFromData(cannon);
+        InitializeCannonFromData(cannonController);
     }
 
-    public void RemoveCannon(Cannon cannon)
+    public void RemoveCannon(CannonController cannonController)
     {
-        if (cannon != null)
+        if (cannonController != null)
         {
-            cannon.OnCycleCompleted -= HandleCannonCycleCompleted;
-            cannon.OnAimCompleted -= HandleCannonAimCompleted;
+            cannonController.OnCycleCompleted -= HandleCannonCycleCompleted;
+            cannonController.OnAimCompleted -= HandleCannonAimCompleted;
         }
     
-        cannons.Remove(cannon);
+        cannons.Remove(cannonController);
     }
 
     public void ReinitializeAllCannons()
@@ -394,7 +394,7 @@ public class TurretWithCannons : MonoBehaviour
         InitializeCannonsFromData();
     }
 
-    public List<Cannon> GetCannons() => cannons;
+    public List<CannonController> GetCannons() => cannons;
 
     // public void ForceReloadAll()
     // {
