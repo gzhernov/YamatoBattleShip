@@ -16,8 +16,9 @@ public class BearingPanelView : MonoBehaviour
     [Tooltip("Текстовое поле с текущим target bearing.")]
     [SerializeField] private TMP_Text targetBearingText;
 
+    [FormerlySerializedAs("platformController")]
     [Tooltip("Контроллер платформы, из которого читается текущий курс.")]
-    [SerializeField] private PlatformController platformController;
+    [SerializeField] private TurrentPlatformController turrentPlatformController;
 
     [Tooltip("Подсистема главной цели, в которой хранится target bearing.")]
     [SerializeField] private MainGunTargetSubSystem mainGunTargetSubSystem;
@@ -55,12 +56,12 @@ public class BearingPanelView : MonoBehaviour
 
     private void Update()
     {
-        if (platformController == null || mainGunTargetSubSystem == null || isSynchronizing)
+        if (turrentPlatformController == null || mainGunTargetSubSystem == null || isSynchronizing)
         {
             return;
         }
 
-        float currentCourse = platformController.GetCurrentCourse();
+        float currentCourse = turrentPlatformController.GetCurrentCourse();
         float currentTargetBearing = mainGunTargetSubSystem.GetTargetBearing();
 
         if (Mathf.Abs(Mathf.DeltaAngle(lastObservedCourse, currentCourse)) <= 0.001f
@@ -74,7 +75,7 @@ public class BearingPanelView : MonoBehaviour
 
     public void RefreshFromPlatformState()
     {
-        if (platformController == null || mainGunTargetSubSystem == null)
+        if (turrentPlatformController == null || mainGunTargetSubSystem == null)
         {
             LogConfigurationError("BearingPanelView: не назначены обязательные ссылки на PlatformController и MainGunTargetSubSystem.");
             return;
@@ -140,7 +141,7 @@ public class BearingPanelView : MonoBehaviour
             return;
         }
 
-        if (platformController == null)
+        if (turrentPlatformController == null)
         {
             LogConfigurationError("BearingPanelView: не назначена ссылка на PlatformController.");
             return;
@@ -152,7 +153,7 @@ public class BearingPanelView : MonoBehaviour
             return;
         }
 
-        float course = platformController.GetCurrentCourse();
+        float course = turrentPlatformController.GetCurrentCourse();
         float targetBearing = NormalizeAngle(course + signedDelta);
         ApplyAbsoluteBearing(targetBearing, true);
     }
@@ -173,8 +174,8 @@ public class BearingPanelView : MonoBehaviour
             }
         }
 
-        float currentCourse = platformController != null
-            ? platformController.GetCurrentCourse()
+        float currentCourse = turrentPlatformController != null
+            ? turrentPlatformController.GetCurrentCourse()
             : 0f;
 
         string relativeBearing = ConvertAbsoluteBearingToPortStarboard(currentCourse, normalizedBearing);
@@ -270,7 +271,7 @@ public class BearingPanelView : MonoBehaviour
             LogConfigurationError("BearingPanelView: не назначена ссылка на текст bearing.");
         }
 
-        if (platformController == null)
+        if (turrentPlatformController == null)
         {
             LogConfigurationError("BearingPanelView: не назначена ссылка на PlatformController.");
         }

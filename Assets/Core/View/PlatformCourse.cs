@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 public class PlatformCourse : MonoBehaviour
@@ -11,8 +12,9 @@ public class PlatformCourse : MonoBehaviour
     [Tooltip("Текстовое поле для отображения текущего курса.")]
     [SerializeField] private TMP_Text currentCourseText;
 
+    [FormerlySerializedAs("platformController")]
     [Tooltip("Контроллер платформы, который получает новый курс.")]
-    [SerializeField] private PlatformController platformController;
+    [SerializeField] private TurrentPlatformController turrentPlatformController;
 
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
@@ -78,9 +80,9 @@ public class PlatformCourse : MonoBehaviour
             currentCourseText.text = FormatCourseText(normalizedCourse);
         }
 
-        if (platformController != null)
+        if (turrentPlatformController != null)
         {
-            platformController.SetCourse(normalizedCourse);
+            turrentPlatformController.SetCourse(normalizedCourse);
         }
         else
         {
@@ -100,7 +102,7 @@ public class PlatformCourse : MonoBehaviour
             LogConfigurationError("PlatformCourse: не назначена ссылка на currentCourse.");
         }
 
-        if (platformController == null)
+        if (turrentPlatformController == null)
         {
             LogConfigurationError("PlatformCourse: не назначена ссылка на PlatformController.");
         }

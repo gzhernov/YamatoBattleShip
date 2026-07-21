@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 [DisallowMultipleComponent]
-public class PlatformController : MonoBehaviour
+public class TurrentPlatformController : MonoBehaviour
 {
     private enum SalvoFireLoopState
     {

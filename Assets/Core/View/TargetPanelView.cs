@@ -5,9 +5,10 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public class TargetPanelView : MonoBehaviour
 {
+    [FormerlySerializedAs("platformController")]
     [Header("Ссылки")]
     [Tooltip("Контроллер платформы, в который делегируется команда Aim.")]
-    [SerializeField] private PlatformController platformController;
+    [SerializeField] private TurrentPlatformController turrentPlatformController;
 
     [Tooltip("Подсистема главной цели, из которой читаются bearing и дистанция.")]
     [SerializeField] private MainGunTargetSubSystem mainGunTargetSubSystem;
@@ -51,7 +52,7 @@ public class TargetPanelView : MonoBehaviour
 
         float bearing = mainGunTargetSubSystem.GetTargetBearing();
         float elevation = mainGunTargetSubSystem.GetTargetDistanse();
-        platformController.Aim(bearing, elevation);
+        turrentPlatformController.Aim(bearing, elevation);
     }
 
     private void Subscribe()
@@ -80,7 +81,7 @@ public class TargetPanelView : MonoBehaviour
     {
         bool hasAllReferences = true;
 
-        if (platformController == null)
+        if (turrentPlatformController == null)
         {
             LogConfigurationError("TargetPanelView: не назначена ссылка на PlatformController.");
             hasAllReferences = false;

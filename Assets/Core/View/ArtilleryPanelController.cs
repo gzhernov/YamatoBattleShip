@@ -1,12 +1,14 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class ArtilleryPanelController : MonoBehaviour
 {
+    [FormerlySerializedAs("platformController")]
     [Header("Ссылки")]
     [Tooltip("Контроллер платформы, в который делегируется команда залпа.")]
-    [SerializeField] private PlatformController platformController;
+    [SerializeField] private TurrentPlatformController turrentPlatformController;
 
     [Tooltip("Кнопка, по нажатию на которую отправляется команда залпа.")]
     [SerializeField] private Button fireButton;
@@ -48,7 +50,7 @@ public class ArtilleryPanelController : MonoBehaviour
             return;
         }
 
-        platformController.TryStartSalvo();
+        turrentPlatformController.TryStartSalvo();
     }
 
     public void InvokeAutoFire()
@@ -58,13 +60,13 @@ public class ArtilleryPanelController : MonoBehaviour
             return;
         }
 
-        if (platformController.IsAutoSalvoFireActive())
+        if (turrentPlatformController.IsAutoSalvoFireActive())
         {
-            platformController.StopAutoSalvoFire();
+            turrentPlatformController.StopAutoSalvoFire();
             return;
         }
 
-        platformController.StartAutoSalvoFire();
+        turrentPlatformController.StartAutoSalvoFire();
     }
 
     private void Subscribe()
@@ -103,7 +105,7 @@ public class ArtilleryPanelController : MonoBehaviour
     {
         bool hasAllReferences = true;
 
-        if (platformController == null)
+        if (turrentPlatformController == null)
         {
             LogConfigurationError("ArtilleryPanelController: не назначена ссылка на PlatformController.");
             hasAllReferences = false;
