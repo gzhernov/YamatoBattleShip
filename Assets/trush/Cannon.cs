@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public enum CannonCycleState
 {
@@ -28,6 +29,14 @@ public class Cannon : MonoBehaviour
     private float firingDuration = 5f;
     private float prepareLoadingDuration = 5f;
     private float reloadDuration = 5f;
+
+    public Dictionary<CannonCycleState, float> FiringDurations = new Dictionary<CannonCycleState, float>
+    {
+        [CannonCycleState.PrepareFiring] = 0f,
+        [CannonCycleState.Firing] = 5f,
+        [CannonCycleState.PrepareLoading] = 5f,
+        [CannonCycleState.Loading] = 5f
+    };
 
     [Header("Current State")]
     [SerializeField] private CannonCycleState cycleState = CannonCycleState.Ready;
@@ -121,6 +130,7 @@ public class Cannon : MonoBehaviour
         this.firingDuration = firingDuration;
         this.prepareLoadingDuration = prepareLoadingDuration;
         this.reloadDuration = reloadDuration;
+        SyncFiringDurations();
     }
 
     private void RotateCannonToAngle()
@@ -204,19 +214,20 @@ public class Cannon : MonoBehaviour
 
     public float GetDuration(CannonCycleState state)
     {
-        switch (state)
+        return FiringDurations.GetValueOrDefault(state, 0f);
+    }
+
+    private void SyncFiringDurations()
+    {
+        if (FiringDurations == null)
         {
-            case CannonCycleState.PrepareFiring:
-                return prepareFiringDuration;
-            case CannonCycleState.Firing:
-                return firingDuration;
-            case CannonCycleState.PrepareLoading:
-                return prepareLoadingDuration;
-            case CannonCycleState.Loading:
-                return reloadDuration;
-            default:
-                return 0f;
+            FiringDurations = new Dictionary<CannonCycleState, float>();
         }
+
+        FiringDurations[CannonCycleState.PrepareFiring] = prepareFiringDuration;
+        FiringDurations[CannonCycleState.Firing] = firingDuration;
+        FiringDurations[CannonCycleState.PrepareLoading] = prepareLoadingDuration;
+        FiringDurations[CannonCycleState.Loading] = reloadDuration;
     }
 
     private void CompleteLoadingPhase()

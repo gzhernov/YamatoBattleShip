@@ -38,14 +38,6 @@ public class TurretWithCannons : MonoBehaviour
     [SerializeField] private float prepareLoadingDuration = 5f;
     [SerializeField] private float reloadDuration = 5f;
 
-    public Dictionary<CannonCycleState, float> FiringDurations = new Dictionary<CannonCycleState, float>
-    {
-        [CannonCycleState.PrepareFiring] = 0f,
-        [CannonCycleState.Firing] = 5f,
-        [CannonCycleState.PrepareLoading] = 5f,
-        [CannonCycleState.Loading] = 5f
-    };
-
     [Header("Cycle State")]
     [SerializeField] private TurretCycleState cycleState = TurretCycleState.Ready;
 
@@ -65,7 +57,6 @@ public class TurretWithCannons : MonoBehaviour
 
     private void Start()
     {
-        SyncFiringDurations();
         InitializeCannons();
         SubscribeToCannons();
     }
@@ -77,7 +68,6 @@ public class TurretWithCannons : MonoBehaviour
 
     private void OnValidate()
     {
-        SyncFiringDurations();
 
         // В редакторе автоматически находим и инициализируем орудия.
         if (autoFindCannons)
@@ -124,7 +114,6 @@ public class TurretWithCannons : MonoBehaviour
 
     private void InitializeCannonsFromData()
     {
-        SyncFiringDurations();
 
         if (cannons == null || cannons.Count == 0)
         {
@@ -152,25 +141,12 @@ public class TurretWithCannons : MonoBehaviour
             loadingAngle,
             microDelayMin,
             microDelayMax,
-            FiringDurations[CannonCycleState.PrepareFiring],
-            FiringDurations[CannonCycleState.Firing],
-            FiringDurations[CannonCycleState.PrepareLoading],
-            FiringDurations[CannonCycleState.Loading]);
+            prepareFiringDuration,
+            firingDuration,
+            prepareLoadingDuration,
+            reloadDuration);
 
         Debug.Log($"Initialized cannon: {cannon.CannonId}");
-    }
-
-    private void SyncFiringDurations()
-    {
-        if (FiringDurations == null)
-        {
-            FiringDurations = new Dictionary<CannonCycleState, float>();
-        }
-
-        FiringDurations[CannonCycleState.PrepareFiring] = prepareFiringDuration;
-        FiringDurations[CannonCycleState.Firing] = firingDuration;
-        FiringDurations[CannonCycleState.PrepareLoading] = prepareLoadingDuration;
-        FiringDurations[CannonCycleState.Loading] = reloadDuration;
     }
 
     private void SubscribeToCannons()
