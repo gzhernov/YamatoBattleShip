@@ -24,7 +24,12 @@ public class Cannon : MonoBehaviour
     [Header("Cannon Parameters")]
     [SerializeField] private float damage = 10f;
     [SerializeField] private float cannonSpeed = 30f;
-
+    [SerializeField] private float maxAngle = 45f;
+    [SerializeField] private float loadingAngle = 0f;
+    [SerializeField] private float microDelayMin = 0f;
+    [SerializeField] private float microDelayMax = 0.15f;
+    
+    
     [Header("Cannon Durations")] 
     [SerializeField] private float prepareFiringDuration = 0f;
     [SerializeField] private float firingDuration = 5f;
@@ -41,11 +46,8 @@ public class Cannon : MonoBehaviour
     
     
     
-    [Header(" ")]
-    [SerializeField] private float maxAngle = 45f;
-    [SerializeField] private float loadingAngle = 0f;
-    [SerializeField] private float microDelayMin = 0f;
-    [SerializeField] private float microDelayMax = 0.15f;
+    
+    
 
     [Header("Current State")]
     [SerializeField] private CannonCycleState cycleState = CannonCycleState.Ready;
