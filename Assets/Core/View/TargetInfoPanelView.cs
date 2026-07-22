@@ -10,11 +10,15 @@ public class TargetInfoPanelView : MonoBehaviour
     [Tooltip("Одометр, отображающий абсолютный bearing цели.")]
     [SerializeField] private OdometerController bearingOdometer;
 
+    [Tooltip("Одометр, отображающий дистанцию до цели.")]
+    [SerializeField] private OdometerController distanceOdometer;
+
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
     [SerializeField] private bool logConfigurationErrors = true;
 
     private int lastDisplayedBearing = int.MinValue;
+    private int lastDisplayedDistance = int.MinValue;
 
     private void Awake()
     {
@@ -34,36 +38,35 @@ public class TargetInfoPanelView : MonoBehaviour
 
     private void Update()
     {
-        if (mainGunTargetSubSystem == null || bearingOdometer == null)
+        if (mainGunTargetSubSystem == null)
         {
             return;
         }
 
         int roundedBearing = Mathf.RoundToInt(mainGunTargetSubSystem.GetTargetBearing());
+        int roundedDistance = Mathf.RoundToInt(mainGunTargetSubSystem.GetTargetDistanse());
 
-        if (lastDisplayedBearing == roundedBearing)
+        if (bearingOdometer != null && lastDisplayedBearing != roundedBearing)
         {
-            return;
+            ApplyBearing(roundedBearing);
         }
 
-        ApplyBearing(roundedBearing);
+        if (distanceOdometer != null && lastDisplayedDistance != roundedDistance)
+        {
+            ApplyDistance(roundedDistance);
+        }
     }
 
     public void Refresh()
     {
         if (mainGunTargetSubSystem == null)
         {
-            LogConfigurationError("TargetInfoPanelController: не назначена ссылка на MainGunTargetSubSystem.");
+            LogConfigurationError("TargetInfoPanelView: не назначена ссылка на MainGunTargetSubSystem.");
             return;
         }
 
-        if (bearingOdometer == null)
-        {
-            LogConfigurationError("TargetInfoPanelController: не назначена ссылка на BearingOdometr.");
-            return;
-        }
-
-        ApplyBearing(Mathf.RoundToInt(mainGunTargetSubSystem.GetTargetBearing()));
+        RefreshBearing();
+        RefreshDistance();
     }
 
     private void ApplyBearing(int bearing)
@@ -72,16 +75,49 @@ public class TargetInfoPanelView : MonoBehaviour
         lastDisplayedBearing = bearing;
     }
 
+    private void ApplyDistance(int distance)
+    {
+        distanceOdometer.SetValueWithoutNotify(distance);
+        lastDisplayedDistance = distance;
+    }
+
+    private void RefreshBearing()
+    {
+        if (bearingOdometer == null)
+        {
+            LogConfigurationError("TargetInfoPanelView: не назначена ссылка на BearingOdometr.");
+            return;
+        }
+
+        ApplyBearing(Mathf.RoundToInt(mainGunTargetSubSystem.GetTargetBearing()));
+    }
+
+    private void RefreshDistance()
+    {
+        if (distanceOdometer == null)
+        {
+            LogConfigurationError("TargetInfoPanelView: не назначена ссылка на DistanceOdometr.");
+            return;
+        }
+
+        ApplyDistance(Mathf.RoundToInt(mainGunTargetSubSystem.GetTargetDistanse()));
+    }
+
     private void ValidateReferences()
     {
         if (mainGunTargetSubSystem == null)
         {
-            LogConfigurationError("TargetInfoPanelController: не назначена ссылка на MainGunTargetSubSystem.");
+            LogConfigurationError("TargetInfoPanelView: не назначена ссылка на MainGunTargetSubSystem.");
         }
 
         if (bearingOdometer == null)
         {
-            LogConfigurationError("TargetInfoPanelController: не назначена ссылка на BearingOdometr.");
+            LogConfigurationError("TargetInfoPanelView: не назначена ссылка на BearingOdometr.");
+        }
+
+        if (distanceOdometer == null)
+        {
+            LogConfigurationError("TargetInfoPanelView: не назначена ссылка на DistanceOdometr.");
         }
     }
 
