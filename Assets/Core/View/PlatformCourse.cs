@@ -12,9 +12,10 @@ public class PlatformCourse : MonoBehaviour
     [Tooltip("Текстовое поле для отображения текущего курса.")]
     [SerializeField] private TMP_Text currentCourseText;
 
+    [FormerlySerializedAs("turrentPlatformController")]
     [FormerlySerializedAs("platformController")]
     [Tooltip("Контроллер платформы, который получает новый курс.")]
-    [SerializeField] private TurrentPlatformController turrentPlatformController;
+    [SerializeField] private TurrentPlatformController turretPlatformController;
 
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
@@ -80,9 +81,9 @@ public class PlatformCourse : MonoBehaviour
             currentCourseText.text = FormatCourseText(normalizedCourse);
         }
 
-        if (turrentPlatformController != null)
+        if (turretPlatformController != null)
         {
-            turrentPlatformController.SetCourse(normalizedCourse);
+            turretPlatformController.SetCourse(normalizedCourse);
         }
         else
         {
@@ -102,7 +103,7 @@ public class PlatformCourse : MonoBehaviour
             LogConfigurationError("PlatformCourse: не назначена ссылка на currentCourse.");
         }
 
-        if (turrentPlatformController == null)
+        if (turretPlatformController == null)
         {
             LogConfigurationError("PlatformCourse: не назначена ссылка на PlatformController.");
         }
