@@ -1,14 +1,12 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class ArtilleryPanelController : MonoBehaviour
 {
-    [FormerlySerializedAs("platformController")]
     [Header("Ссылки")]
-    [Tooltip("Контроллер платформы, в который делегируется команда залпа.")]
-    [SerializeField] private TurrentPlatformController turrentPlatformController;
+    [Tooltip("Контроллер огня главного калибра, в который делегируются команды залпа.")]
+    [SerializeField] private FireControlController fireControlController;
 
     [Tooltip("Кнопка, по нажатию на которую отправляется команда залпа.")]
     [SerializeField] private Button fireButton;
@@ -16,7 +14,7 @@ public class ArtilleryPanelController : MonoBehaviour
     [Tooltip("Кнопка, по нажатию на которую включается или выключается автоматический залповый огонь.")]
     [SerializeField] private Button autoFireButton;
 
-    [Tooltip("Лампа, которая мигает пока активен автоматический цикл залпового огня.")]
+    [Tooltip("Лампа, которая мигает, пока активен автоматический цикл залпового огня.")]
     [SerializeField] private LampController salvoLamp;
 
     [Header("Настройки")]
@@ -60,7 +58,7 @@ public class ArtilleryPanelController : MonoBehaviour
             return;
         }
 
-        turrentPlatformController.TryStartSalvo();
+        fireControlController.TryStartSalvo();
     }
 
     public void InvokeAutoFire()
@@ -70,13 +68,13 @@ public class ArtilleryPanelController : MonoBehaviour
             return;
         }
 
-        if (turrentPlatformController.IsAutoSalvoFireActive())
+        if (fireControlController.IsAutoSalvoFireActive())
         {
-            turrentPlatformController.StopAutoSalvoFire();
+            fireControlController.StopAutoSalvoFire();
             return;
         }
 
-        turrentPlatformController.StartAutoSalvoFire();
+        fireControlController.StartAutoSalvoFire();
     }
 
     private void Subscribe()
@@ -115,9 +113,9 @@ public class ArtilleryPanelController : MonoBehaviour
     {
         bool hasAllReferences = true;
 
-        if (turrentPlatformController == null)
+        if (fireControlController == null)
         {
-            LogConfigurationError("ArtilleryPanelController: не назначена ссылка на PlatformController.");
+            LogConfigurationError("ArtilleryPanelController: не назначена ссылка на FireControlController.");
             hasAllReferences = false;
         }
 
@@ -144,12 +142,12 @@ public class ArtilleryPanelController : MonoBehaviour
 
     private void UpdateSalvoLamp()
     {
-        if (turrentPlatformController == null || salvoLamp == null)
+        if (fireControlController == null || salvoLamp == null)
         {
             return;
         }
 
-        LampState targetState = turrentPlatformController.IsSalvoFireLoopActive()
+        LampState targetState = fireControlController.IsSalvoFireLoopActive()
             ? LampState.Blinked
             : LampState.Off;
 

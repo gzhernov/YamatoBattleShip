@@ -1,14 +1,12 @@
-﻿using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class TargetPanelView : MonoBehaviour
 {
-    [FormerlySerializedAs("platformController")]
     [Header("Ссылки")]
-    [Tooltip("Контроллер платформы, в который делегируется команда Aim.")]
-    [SerializeField] private TurrentPlatformController turrentPlatformController;
+    [Tooltip("Контроллер огня главного калибра, в который делегируется команда наведения.")]
+    [SerializeField] private FireControlController fireControlController;
 
     [Tooltip("Подсистема главной цели, из которой читаются bearing и дистанция.")]
     [SerializeField] private MainGunTargetSubSystem mainGunTargetSubSystem;
@@ -52,7 +50,7 @@ public class TargetPanelView : MonoBehaviour
 
         float bearing = mainGunTargetSubSystem.GetTargetBearing();
         float elevation = mainGunTargetSubSystem.GetTargetDistanse();
-        turrentPlatformController.Aim(bearing, elevation);
+        fireControlController.Aim(bearing, elevation);
     }
 
     private void Subscribe()
@@ -81,9 +79,9 @@ public class TargetPanelView : MonoBehaviour
     {
         bool hasAllReferences = true;
 
-        if (turrentPlatformController == null)
+        if (fireControlController == null)
         {
-            LogConfigurationError("TargetPanelView: не назначена ссылка на PlatformController.");
+            LogConfigurationError("TargetPanelView: не назначена ссылка на FireControlController.");
             hasAllReferences = false;
         }
 
