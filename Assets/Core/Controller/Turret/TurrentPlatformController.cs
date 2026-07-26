@@ -213,6 +213,11 @@ public class TurrentPlatformController : MonoBehaviour
         return autoSalvoFireEnabled;
     }
 
+    public bool IsSalvoFireLoopActive()
+    {
+        return salvoFireLoopState != SalvoFireLoopState.Idle;
+    }
+
     public void Aim(float bearing, float elevation)
     {
         if (autoFindTurrets)

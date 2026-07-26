@@ -16,6 +16,9 @@ public class ArtilleryPanelController : MonoBehaviour
     [Tooltip("Кнопка, по нажатию на которую включается или выключается автоматический залповый огонь.")]
     [SerializeField] private Button autoFireButton;
 
+    [Tooltip("Лампа, которая мигает пока активен автоматический цикл залпового огня.")]
+    [SerializeField] private LampController salvoLamp;
+
     [Header("Настройки")]
     [Tooltip("Если включено, компонент пишет ошибки конфигурации в лог.")]
     [SerializeField] private bool logConfigurationErrors = true;
@@ -31,16 +34,23 @@ public class ArtilleryPanelController : MonoBehaviour
     {
         ValidateReferences();
         Subscribe();
+        UpdateSalvoLamp();
     }
 
     private void OnDisable()
     {
         Unsubscribe();
+        SetSalvoLampState(LampState.Off);
     }
 
     private void OnValidate()
     {
         ValidateReferences();
+    }
+
+    private void Update()
+    {
+        UpdateSalvoLamp();
     }
 
     public void InvokeFire()
@@ -123,7 +133,37 @@ public class ArtilleryPanelController : MonoBehaviour
             hasAllReferences = false;
         }
 
+        if (salvoLamp == null)
+        {
+            LogConfigurationError("ArtilleryPanelController: не назначена ссылка на лампу залпа.");
+            hasAllReferences = false;
+        }
+
         return hasAllReferences;
+    }
+
+    private void UpdateSalvoLamp()
+    {
+        if (turrentPlatformController == null || salvoLamp == null)
+        {
+            return;
+        }
+
+        LampState targetState = turrentPlatformController.IsSalvoFireLoopActive()
+            ? LampState.Blinked
+            : LampState.Off;
+
+        SetSalvoLampState(targetState);
+    }
+
+    private void SetSalvoLampState(LampState targetState)
+    {
+        if (salvoLamp == null || salvoLamp.CurrentState == targetState)
+        {
+            return;
+        }
+
+        salvoLamp.SetState(targetState);
     }
 
     private void ValidateReferences()
