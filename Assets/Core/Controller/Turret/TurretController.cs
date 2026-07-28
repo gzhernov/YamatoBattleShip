@@ -12,12 +12,11 @@ public enum TurretCycleState
 
 public class TurretWithCannons : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private Transform turretMesh;
+
     [Header("Turret Settings")]
     [SerializeField] private TurretData turretData;
-
-    [Header("Turret Rotation")]
-    [SerializeField] private bool rotateWholeTurret = true;
-    [SerializeField] private Transform turretPivot;
 
     [Header("Cannons")]
     [SerializeField] private List<CannonController> cannons = new List<CannonController>();
@@ -206,11 +205,6 @@ public class TurretWithCannons : MonoBehaviour
         }
     }
 
-    private Transform GetRotationSource()
-    {
-        return rotateWholeTurret ? transform : turretPivot;
-    }
-
     private void RotateTurretToBearing()
     {
         if (!hasAimCommand || turretData == null)
@@ -219,13 +213,12 @@ public class TurretWithCannons : MonoBehaviour
         if (IsTurretBearingReached())
             return;
 
-        Transform rotationSource = GetRotationSource();
-        if (rotationSource == null)
+        if (turretMesh == null)
             return;
 
         Quaternion targetRotation = Quaternion.Euler(0f, desiredBearing, 0f);
-        rotationSource.rotation = Quaternion.RotateTowards(
-            rotationSource.rotation,
+        turretMesh.rotation = Quaternion.RotateTowards(
+            turretMesh.rotation,
             targetRotation,
             turretData.TurretSpeed * Time.deltaTime
         );
@@ -357,11 +350,10 @@ public class TurretWithCannons : MonoBehaviour
 
     public float GetCurrentBearing()
     {
-        Transform rotationSource = GetRotationSource();
-        if (rotationSource == null)
+        if (turretMesh == null)
             return 0f;
 
-        return rotationSource.rotation.eulerAngles.y;
+        return turretMesh.rotation.eulerAngles.y;
     }
 
     public void AddCannon(CannonController cannonController)
