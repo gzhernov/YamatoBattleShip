@@ -170,7 +170,7 @@ public class FireControlController : MonoBehaviour
         }
     }
 
-    public bool TryStartSalvo()
+    public bool StartSalvoFire()
     {
         if (autoFindTurrets)
         {
@@ -291,7 +291,7 @@ public class FireControlController : MonoBehaviour
 
     private void UpdateAutoSalvoStartingSalvo()
     {
-        if (TryStartSalvo())
+        if (StartSalvoFire())
         {
             salvoFireLoopState = SalvoFireLoopState.WaitingTurretsReady;
             return;

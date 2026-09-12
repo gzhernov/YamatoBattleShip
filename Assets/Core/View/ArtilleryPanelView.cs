@@ -58,7 +58,7 @@ public class ArtilleryPanelController : MonoBehaviour
             return;
         }
 
-        fireControlController.TryStartSalvo();
+        fireControlController.StartSalvoFire();
     }
 
     public void InvokeAutoFire()
